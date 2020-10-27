@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 
 import scipp as sc
-import pathlib 
+import pathlib
 
 
 def filepath_converter(filepath, data_directory=pathlib.Path.cwd()):
@@ -16,19 +16,19 @@ def filepath_converter(filepath, data_directory=pathlib.Path.cwd()):
     Throws if file not found.
     """
     path = pathlib.Path(filepath)
-    
+
     if path.is_file():
         return filepath
 
     path = data_directory / path
-    
+
     if path.is_file():
         return str(path)
 
     raise ValueError(f'Filepath {filepath} was not found.')
 
 
-def scope_converter(object_name, scope = {}):
+def scope_converter(object_name, scope={}):
     """
     Attempts to convert the string input into an object by 
     assuming it names an object in the provided scope.
@@ -38,4 +38,5 @@ def scope_converter(object_name, scope = {}):
     if object_name in scope:
         return scope[object_name]
 
-    raise ValueError(f'Object of name {object_name} does not exist within scope.')
+    raise ValueError(
+        f'Object of name {object_name} does not exist within scope.')
