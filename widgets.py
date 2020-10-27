@@ -6,6 +6,7 @@
 import ipywidgets as widgets
 import scipp as sc
 from scipp.plot import plot
+from converters import scipp_object
 from IPython.core.display import display, HTML
 from typing import (TypeVar, Any, Mapping, Callable, Sequence, MutableMapping)
 
@@ -169,7 +170,7 @@ class PlotWidget(widgets.Box):
         """
         options = [
             key for key, item in self.scope.items()
-            if isinstance(item, (sc.DataArray, sc.Dataset, sc.Variable))
+            if isinstance(item, scipp_object)
         ]
         self._data_selector.options = options
         self.plot_options.clear_output()

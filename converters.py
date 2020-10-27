@@ -6,6 +6,12 @@
 import scipp as sc
 import pathlib
 
+scipp_object_mutable = (sc.DataArray, sc.Dataset, sc.Variable,
+                        sc.DataArrayView, sc.DatasetView, sc.VariableView)
+
+scipp_object = scipp_object_mutable + (
+    sc.DataArrayConstView, sc.DatasetConstView, sc.VariableConstView)
+
 
 def filepath_converter(filepath, data_directory=pathlib.Path.cwd()):
     """
@@ -28,7 +34,7 @@ def filepath_converter(filepath, data_directory=pathlib.Path.cwd()):
     raise ValueError(f'Filepath {filepath} was not found.')
 
 
-def scope_converter(object_name, scope={}):
+def scope_converter(object_name, scope):
     """
     Attempts to convert the string input into an object by 
     assuming it names an object in the provided scope.
@@ -40,3 +46,20 @@ def scope_converter(object_name, scope={}):
 
     raise ValueError(
         f'Object of name {object_name} does not exist within scope.')
+
+
+def typed_scope_converter(object_name, allowed_types, scope):
+    """
+    Attempts to convert the string input into an scipp object by 
+    assuming it names an object in the provided scope.
+
+    Throws if object is not found or not of an allowed type.
+    """
+    object = scope_converter(object_name, scope)
+
+    if not isinstance(object, allowed_types):
+        valid_types = ','.join(str(item.__name__) for item in allowed_types)
+        raise ValueError(
+            f'{object_name} of invalid type. Valid types are: {valid_types}')
+
+    return object
