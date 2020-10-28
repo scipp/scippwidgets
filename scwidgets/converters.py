@@ -63,3 +63,16 @@ def typed_scope_converter(object_name, allowed_types, scope):
             f'{object_name} of invalid type. Valid types are: {valid_types}')
 
     return object
+
+
+def string_allowed_values_converter(input, allowed_values):
+    """
+    Validates a string belongs to an allowed set. 
+    Throws if this is not the case.
+    """
+    if input not in allowed_values:
+        raise ValueError(
+            f'{input} not an allowed value. Valid values are: {",".join(allowed_values)}'
+        )
+
+    return input

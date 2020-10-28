@@ -6,7 +6,7 @@
 import ipywidgets as widgets
 import scipp as sc
 from scipp.plot import plot
-from converters import scipp_object
+from .converters import scipp_object
 from IPython.core.display import display, HTML
 from typing import (TypeVar, Any, Mapping, Callable, Sequence, MutableMapping)
 
@@ -50,8 +50,13 @@ class ProcessWidget(widgets.Box):
         self.button = widgets.Button(description=name)
         self.button.on_click(self._on_button_clicked)
 
+        self.output_area = widgets.Output()
+
         self.children = [
-            widgets.HBox(self.input_widgets + [self.output, self.button])
+            widgets.VBox([
+                widgets.HBox(self.input_widgets + [self.output, self.button]),
+                self.output_area
+            ])
         ]
 
         self.subscribers = []
@@ -80,12 +85,14 @@ class ProcessWidget(widgets.Box):
         return kwargs
 
     def _on_button_clicked(self, button):
-        if self.output.value:
-            output_name = self.output.value
-        else:
-            print(f'Invalid inputs: No output name specified')
-            return
-        self.scope[output_name] = self.process()
+        self.output_area.clear_output()
+        with self.output_area:
+            if self.output.value:
+                output_name = self.output.value
+            else:
+                print(f'Invalid inputs: No output name specified')
+                return
+            self.scope[output_name] = self.process()
 
     def process(self):
         """
@@ -105,8 +112,8 @@ class ProcessWidget(widgets.Box):
 
 def _repr_html_(scope):
     """
-        Helper method to display the scipp objects in a given scope.
-        """
+    Helper method to display the scipp objects in a given scope.
+    """
     from IPython import get_ipython
     ipython = get_ipython()
     out = ''

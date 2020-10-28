@@ -5,7 +5,7 @@
 
 import pytest
 from converters import (filepath_converter, scope_converter,
-                        typed_scope_converter)
+                        typed_scope_converter, string_allowed_values_converter)
 
 
 @pytest.fixture
@@ -72,3 +72,15 @@ def test_typed_scope_converter_throws_exception_if_object_is_not_allowed_type(
 
     assert str(
         excinfo.value) == 'test_object of invalid type. Valid types are: dict'
+
+
+def test_string_allowed_values_converter():
+    converted_object = string_allowed_values_converter('tof', ('tof', ))
+
+    assert converted_object == 'tof'
+
+    with pytest.raises(ValueError) as excinfo:
+        string_allowed_values_converter('tof', ('wavelength', ))
+
+    assert str(excinfo.value
+               ) == 'tof not an allowed value. Valid values are: wavelength'
