@@ -27,8 +27,6 @@ stages:
                 displayName: 'add conda to PATH'
             - bash: |
                 set -ex
-                echo is master $(is_master)
-                echo target branch $(System.PullRequest.TargetBranch)
                 conda config --set always_yes yes --set changeps1 no
                 conda env create -f scipp-widgets.yaml
                 source activate scipp-widgets
