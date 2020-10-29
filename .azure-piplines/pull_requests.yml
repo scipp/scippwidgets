@@ -28,7 +28,7 @@ stages:
           - bash: |
               set -ex
               conda config --set always_yes yes --set changeps1 no
-              conda env create -f scipp-widgets.yaml
+              conda env create -f scipp-widgets.yml
               source activate scipp-widgets
 
               python -m pytest --junitxml=junit/unit-test.xml
