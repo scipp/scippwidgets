@@ -32,7 +32,7 @@ stages:
               source activate scipp-widgets
 
               python -m pytest --junitxml=junit/unit-test.xml
-              displayName: 'run pytest'
+            displayName: "run pytest"
           - task: PublishTestResults@2
             inputs:
               testResultsFiles: "junit/*.xml"
