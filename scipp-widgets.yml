@@ -1,0 +1,11 @@
+name: scipp-widgets
+
+channels:
+  - conda-forge
+  - scipp
+
+dependencies:
+  - scipp 
+  - pytest
+  - ipywidgets
+  - yapf
