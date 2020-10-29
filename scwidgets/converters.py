@@ -36,7 +36,7 @@ def filepath_converter(filepath, data_directory=pathlib.Path.cwd()):
 
 def scope_converter(object_name, scope):
     """
-    Attempts to convert the string input into an object by 
+    Attempts to convert the string input into an object by
     assuming it names an object in the provided scope.
 
     Throws if not object of correct name found.
@@ -50,7 +50,7 @@ def scope_converter(object_name, scope):
 
 def typed_scope_converter(object_name, allowed_types, scope):
     """
-    Attempts to convert the string input into an scipp object by 
+    Attempts to convert the string input into an scipp object by
     assuming it names an object in the provided scope.
 
     Throws if object is not found or not of an allowed type.
@@ -67,12 +67,11 @@ def typed_scope_converter(object_name, allowed_types, scope):
 
 def string_allowed_values_converter(input, allowed_values):
     """
-    Validates a string belongs to an allowed set. 
+    Validates a string belongs to an allowed set.
     Throws if this is not the case.
     """
     if input not in allowed_values:
-        raise ValueError(
-            f'{input} not an allowed value. Valid values are: {",".join(allowed_values)}'
-        )
+        raise ValueError(f'{input} not an allowed value. Valid values are: '
+                         f'{",".join(allowed_values)}')
 
     return input

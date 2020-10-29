@@ -45,4 +45,5 @@ def fake_load(filepath):
         })
 
 
-fake_filepath_converter = lambda input: 'filepath'
+def fake_filepath_converter(input):
+    return 'filepath'

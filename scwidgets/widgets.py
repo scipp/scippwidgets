@@ -8,7 +8,7 @@ import scipp as sc
 from scipp.plot import plot
 from .converters import scipp_object
 from IPython.core.display import display, HTML
-from typing import (TypeVar, Any, Mapping, Callable, Sequence, MutableMapping)
+from typing import (Any, Mapping, Callable, Sequence, MutableMapping)
 
 InputType = Mapping[str, Callable[[str], Any]]
 
@@ -30,11 +30,11 @@ class ProcessWidget(widgets.Box):
         callable (Callable): The function to call
         name: name of widget to display
         inputs (dict): dict of parameter_name: paramter_converter
-        descriptions (dict): dict of parameter_name: paramter_description. 
-            If a parameter_name does not appear in the dict if will be used as it's own description
-        options (dict): a dict of parameter_name: parameter_options if you wish to display a list of
-            options for a given parameter. parameter options may be either a list or a zero argument
-            callable. 
+        descriptions (dict): dict of parameter_name: paramter_description.
+        If a parameter_name does not appear in the dict if will be used as
+        it's own description
+        options (dict): a dict of parameter_name: parameter_options if you wish
+        to display a list of options for a given parameter.
         """
         super().__init__()
         self.scope = scope
@@ -63,7 +63,7 @@ class ProcessWidget(widgets.Box):
 
     def _setup_input_widgets(self, inputs, descriptions, options):
         """
-        Creates a Combobox widget for each entry in the inputs dict. 
+        Creates a Combobox widget for each entry in the inputs dict.
         The placeholder is set based on the descriptions dict and the
         options are set based on the options dict.
         """
@@ -90,13 +90,13 @@ class ProcessWidget(widgets.Box):
             if self.output.value:
                 output_name = self.output.value
             else:
-                print(f'Invalid inputs: No output name specified')
+                print('Invalid inputs: No output name specified')
                 return
             self.scope[output_name] = self.process()
 
     def process(self):
         """
-        Calls the wrapped function using the 
+        Calls the wrapped function using the
         parameter values specified.
 
         Returns: Output of the wrapped callable.
@@ -185,8 +185,8 @@ class PlotWidget(widgets.Box):
             _repr_html_(self.scope)
 
 
-#Method to hide code blocks taken from
-#https://stackoverflow.com/questions/27934885/how-to-hide-code-from-cells-in-ipython-notebook-visualized-with-nbviewer
+# Method to hide code blocks taken from
+# https://stackoverflow.com/questions/27934885/how-to-hide-code-from-cells-in-ipython-notebook-visualized-with-nbviewer
 javascript_functions = {False: "hide()", True: "show()"}
 button_descriptions = {False: "Show code", True: "Hide code"}
 
@@ -217,7 +217,7 @@ def button_action(value):
 
 def setup_code_hiding():
     """
-    Sets up the hiding of code blocks in the notebook at 
+    Sets up the hiding of code blocks in the notebook at
     any point after this is called. Toggled by the button
     this creates.
     """
