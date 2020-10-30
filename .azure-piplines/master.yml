@@ -5,7 +5,7 @@ pr: none
 
 stages:
   - template: code_quality_checks.yml
-  - stage: "Create package and test"
+  - stage: "Create_package_and_test"
     displayName: "Python tests"
 
     jobs:
