@@ -18,17 +18,16 @@ stages:
           - checkout: self
             submodules: true
           - bash: echo "##vso[task.prependpath]$CONDA/bin"
-            displayName: "add conda to PATH"
+            displayName: "Configure Conda directories"
           - bash: |
               set -ex
               conda --version
               conda install --yes anaconda-client conda-build
               conda config --set always_yes yes --set changeps1 no
-              conda env create -f scipp-widgets.yml
             displayName: "conda configuration"
           - bash: |
               conda build --channel conda-forge --channel scipp ./conda
-            displayName: "conda buils"
+            displayName: "Conda Build"
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(conda_dir)/conda-bld/linux-64"
