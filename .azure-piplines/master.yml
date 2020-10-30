@@ -28,8 +28,8 @@ stages:
           - bash: |
               conda build --channel conda-forge --channel scipp ./conda
             displayName: "Conda Build"
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "$(conda_dir)/conda-bld/linux-64"
-          ArtifactName: "linux-64"
-        displayName: "Publish Conda package artefacts"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(conda_dir)/conda-bld/linux-64"
+              ArtifactName: "linux-64"
+            displayName: "Publish Conda package artefacts"
