@@ -1,0 +1,33 @@
+package:
+  name: scwidgets
+  version: { { GIT_DESCRIBE_TAG } }
+
+source:
+  path: ..
+
+requirements:
+  run:
+    - python {{ python }}
+    - scipp
+    - ipywidgets
+
+test:
+  import:
+    - scwidgets
+  requires:
+    - pytest
+  source_files:
+    - .
+  commands:
+    - python -m pytest -v
+
+build:
+  number: { { environ.get('GIT_DESCRIBE_NUMBER', 0) } }
+
+about:
+  home: https://github.com/scipp/scipp-widgets
+  license: GPLv3
+  summary: ipywidget wrappers for scipp
+  description: ipywidget wrappers for scipp
+  dev_url: https://github.com/scipp/scipp-widgets
+  doc_url:
