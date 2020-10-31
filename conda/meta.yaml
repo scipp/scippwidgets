@@ -6,6 +6,8 @@ source:
   path: ..
 
 requirements:
+  build:
+    - python {{ python }}
   run:
     - python {{ python }}
     - scipp
@@ -14,10 +16,12 @@ requirements:
 test:
   import:
     - scwidgets
+    - scwidgets.converters
+    - scwidgets.widgets
   requires:
     - pytest
   source_files:
-    - .
+    - tests
   commands:
     - python -m pytest -v
 

@@ -1,0 +1,1 @@
+mv scwidgets "$CONDA_PREFIX"/lib/python*/
