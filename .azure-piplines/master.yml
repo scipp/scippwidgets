@@ -11,7 +11,7 @@ pr:
 
 stages:
   - template: code_quality_checks.yml
-  - stage: "Create package and test"
+  - stage: "Create_package_and_test"
     displayName: "Python tests"
 
     jobs:
@@ -23,7 +23,9 @@ stages:
         steps:
           - checkout: self
             submodules: true
-          - bash: echo "##vso[task.prependpath]$CONDA/bin"
+          - bash: |
+              echo "##vso[task.prependpath]$CONDA/bin"
+              echo "##vso[task.setvariable variable=conda_dir]$CONDA"
             displayName: "Configure Conda directories"
           - bash: |
               set -ex
@@ -36,6 +38,6 @@ stages:
             displayName: "Conda Build"
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: '$(conda_dir)/conda-bld/linux-64'
-              ArtifactName: 'linux-64'
+              PathtoPublish: "$(conda_dir)/conda-bld/linux-64"
+              ArtifactName: "linux-64"
             displayName: "Publish Conda package artefacts"
