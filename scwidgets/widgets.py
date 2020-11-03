@@ -6,46 +6,27 @@
 import ipywidgets as widgets
 import scipp as sc
 from scipp.plot import plot
-from .converters import scipp_object
+from .inputs import get_notebook_global_scope
 from IPython.core.display import display, HTML
 from typing import (Any, Mapping, Callable, Sequence, MutableMapping)
 
-InputType = Mapping[str, Callable[[str], Any]]
 
-
-class ProcessWidget(widgets.Box):
+class FunctionWrapperWidget(widgets.Box):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self,
-                 scope: MutableMapping[str, Any],
-                 callable: Callable,
-                 name: str,
-                 inputs: InputType,
-                 descriptions: Mapping[str, str] = {},
-                 options: Mapping[str, Sequence[str]] = {}):
+    def __init__(self, callable: Callable, name: str, inputs):
         """
         Parameters:
-        scope (dict): The scope you wish to add the outputs of the function to
         callable (Callable): The function to call
         name: name of widget to display
-        inputs (dict): dict of parameter_name: paramter_converter
-        descriptions (dict): dict of parameter_name: paramter_description.
-        If a parameter_name does not appear in the dict if will be used as
-        it's own description
-        options (dict): a dict of parameter_name: parameter_options if you wish
-        to display a list of options for a given parameter.
+        inputs (Input object): class containing input data
         """
         super().__init__()
-        self.scope = scope
         self.callable = callable
         self.inputs = inputs
         self.input_widgets = []
-        self._setup_input_widgets(inputs, descriptions, options)
-
-        self.output = widgets.Text(placeholder='output name',
-                                   value='',
-                                   continuous_update=False)
+        self._setup_input_widgets(inputs)
 
         self.button = widgets.Button(description=name)
         self.button.on_click(self._on_button_clicked)
@@ -54,23 +35,20 @@ class ProcessWidget(widgets.Box):
 
         self.children = [
             widgets.VBox([
-                widgets.HBox(self.input_widgets + [self.output, self.button]),
+                widgets.HBox(self.input_widgets + [self.button]),
                 self.output_area
             ])
         ]
 
-        self.subscribers = []
-
-    def _setup_input_widgets(self, inputs, descriptions, options):
+    def _setup_input_widgets(self, inputs):
         """
         Creates a Combobox widget for each entry in the inputs dict.
         The placeholder is set based on the descriptions dict and the
         options are set based on the options dict.
         """
-        for name in inputs.keys():
-            placeholder = descriptions[name] if name in descriptions else name
-            option = options[name] if name in options else []
-            option = option() if callable(option) else option
+        for input in inputs:
+            placeholder = input.tooltip
+            option = input.options
             self.input_widgets.append(
                 widgets.Combobox(placeholder=placeholder,
                                  continuous_update=False,
@@ -78,111 +56,66 @@ class ProcessWidget(widgets.Box):
 
     def _retrive_kwargs(self):
         kwargs = {
-            name: converter(item.value)
-            for name, converter, item in zip(
-                self.inputs.keys(), self.inputs.values(), self.input_widgets)
+            input.name: input.validator(item.value)
+            for input, item in zip(self.inputs, self.input_widgets)
         }
         return kwargs
 
     def _on_button_clicked(self, button):
         self.output_area.clear_output()
         with self.output_area:
-            if self.output.value:
-                output_name = self.output.value
-            else:
-                print('Invalid inputs: No output name specified')
+            try:
+                kwargs = self._retrive_kwargs()
+            except ValueError as e:
+                print(f'Invalid inputs: {e}')
                 return
-            self.scope[output_name] = self.process()
 
-    def process(self):
-        """
-        Calls the wrapped function using the
-        parameter values specified.
+            self._process(kwargs)
 
-        Returns: Output of the wrapped callable.
-        """
-        try:
-            kwargs = self._retrive_kwargs()
-        except ValueError as e:
-            print(f'Invalid inputs: {e}')
-            return
-
-        return self.callable(**kwargs)
+    def _process(self, kwargs):
+        display(self.callable(**kwargs))
 
 
-def _repr_html_(scope):
+class ProcessWidget(FunctionWrapperWidget):
     """
-    Helper method to display the scipp objects in a given scope.
+    Provides a simple graphical wrapper around a given callable.
     """
-    from IPython import get_ipython
-    ipython = get_ipython()
-    out = ''
-    for category in ['Variable', 'DataArray', 'Dataset']:
-        names = ipython.magic(f"who_ls {category}")
-        out += f"<details open=\"open\"><summary>{category}s:"\
-               f"({len(names)})</summary>"
-        for name in names:
-            html = sc.table_html.make_html(eval(name, scope))
-            out += f"<details style=\"padding-left:2em\"><summary>"\
-                   f"{name}</summary>{html}</details>"
-        out += "</details>"
-    display(HTML(out))
-
-
-class PlotWidget(widgets.Box):
-    """
-    Wraps scipp.plot.plot attempting to display the result of evaluating
-    the input string as a scipp plot.
-    """
-    def __init__(self, scope: MutableMapping[str, Any]):
+    def __init__(self, callable: Callable, name: str, inputs):
         """
         Parameters:
-        scope (dict): the scope dict to use when evaluating user input.
+        callable (Callable): The function to call
+        name: name of widget to display
+        inputs (Input object): class containing input data
         """
-        super().__init__()
-        self.scope = scope
+        super().__init__(callable, name, inputs)
+        self.scope = get_notebook_global_scope()
 
-        self._data_selector = widgets.Combobox(placeholder='Data to plot')
-
-        self._button = widgets.Button(description='Plot')
-        self._button.on_click(self._on_plot_button_clicked)
-
-        self.plot_options = widgets.Output()
-
-        self.update_button = widgets.Button(description='Update')
-        self.update_button.on_click(self._on_update_button_clicked)
-
-        self.output = widgets.Output(width='100%', height='100%')
+        self.output = widgets.Text(placeholder='output name',
+                                   value='',
+                                   continuous_update=False)
 
         self.children = [
             widgets.VBox([
-                widgets.HBox([self.plot_options, self.update_button]),
-                widgets.HBox([self._data_selector, self._button]), self.output
+                widgets.HBox(self.input_widgets + [self.output, self.button]),
+                self.output_area
             ])
         ]
 
-        self.update()
-
-    def _on_plot_button_clicked(self, button):
-        self.output.clear_output()
-        with self.output:
-            display(plot(eval(self._data_selector.value, self.scope)))
-
-    def _on_update_button_clicked(self, button):
-        self.update()
-
-    def update(self):
+    def _process(self, kwargs):
         """
-        Updates the display of available scipp objects
-        """
-        options = [
-            key for key, item in self.scope.items()
-            if isinstance(item, scipp_object)
-        ]
-        self._data_selector.options = options
-        self.plot_options.clear_output()
-        with self.plot_options:
-            _repr_html_(self.scope)
+            Calls the wrapped function using the
+            parameter values specified.
+
+            Returns: Output of the wrapped callable.
+            """
+        if self.output.value:
+            output_name = self.output.value
+        else:
+            print('Invalid inputs: No output name specified')
+            return
+
+        self.scope[output_name] = self.callable(**kwargs)
+        display(self.scope[output_name])
 
 
 # Method to hide code blocks taken from
