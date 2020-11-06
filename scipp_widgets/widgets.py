@@ -48,7 +48,7 @@ class DisplayWidget(widgets.Box):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callab, name: str, inputs, hide_code=False):
+    def __init__(self, callable, name: str, inputs, hide_code=False):
         """
         Parameters:
         callable (Callable): The function to call
