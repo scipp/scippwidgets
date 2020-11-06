@@ -7,15 +7,90 @@ import ipywidgets as widgets
 import scipp as sc
 from scipp.plot import plot
 from .inputs import get_notebook_global_scope
-from IPython.core.display import display, HTML
+from IPython.core.display import display, HTML, Javascript
 from typing import (Any, Mapping, Callable, Sequence, MutableMapping)
+
+javascript_functions = {False: "hide()", True: "show()"}
+
+
+def toggle_code(state, output_widget=None):
+    """
+    Toggles the JavaScript show()/hide() function on the div.input element.
+    """
+    output_string = "this.element.closest('.cell').children('.input').{}"
+    output_args = (javascript_functions[state], )
+    output = output_string.format(*output_args)
+
+    if (output_widget):
+        output_widget.clear_output()
+        with output_widget:
+            display(Javascript(output))
+    else:
+        display(Javascript(output))
+
+
+def toggle_code_test(state):
+    """
+    Toggles the JavaScript show()/hide() function on the div.input element.
+    """
+    output_string = "this.element.closest('.cell').children('.input').{}"
+    output_args = (javascript_functions[state], )
+    output = output_string.format(*output_args)
+    display(Javascript(output))
+
+
+def button_action(value):
+    """
+    Calls the toggle_code function and updates the button description.
+    """
+    state = value.new
+
+    toggle_code(state)
+
+
+def create_hide_button(state):
+    """
+    Sets up the hiding of code blocks in the notebook at
+    any point after this is called. Toggled by the button
+    this creates.
+    """
+    box = widgets.Box()
+
+    output = widgets.Output()
+    button = widgets.ToggleButton(state, description='Py')
+    button.observe(button_action, "value")
+    button.layout.flex = '0 1 5%'
+    button.layout.align_self = 'flex-end'
+
+    box.children = [button, output]
+    box.layout.align_self = 'flex-end'
+
+    toggle_code(state, output)
+    return
+
+
+class HideCodeWidget(widgets.Box):
+    def __init__(self, state):
+        super().__init__()
+        self.output_widget = widgets.Output()
+        self.button = widgets.ToggleButton(not state, description='Py')
+        self.button.observe(self._on_button_toggle, "value")
+        self.button.layout.flex = '0 1 40px'
+        self.button.layout.align_self = 'flex-end'
+
+        self.children = [self.button, self.output_widget]
+        self.layout.align_self = 'flex-end'
+        toggle_code(not state)
+
+    def _on_button_toggle(self, value):
+        toggle_code(value.new, self.output_widget)
 
 
 class FunctionWrapperWidget(widgets.Box):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callable: Callable, name: str, inputs):
+    def __init__(self, callable: Callable, name: str, inputs, hide_code=False):
         """
         Parameters:
         callable (Callable): The function to call
@@ -23,6 +98,7 @@ class FunctionWrapperWidget(widgets.Box):
         inputs (Input object): class containing input data
         """
         super().__init__()
+        self.layout.flex_flow = 'column'
         self.callable = callable
         self.inputs = inputs
         self.input_widgets = []
@@ -30,15 +106,18 @@ class FunctionWrapperWidget(widgets.Box):
 
         self.button = widgets.Button(description=name)
         self.button.on_click(self._on_button_clicked)
+        self.button_widgets = [self.button]
+        if (hide_code):
+            self.button_widgets += (HideCodeWidget(True), )
 
         self.output_area = widgets.Output()
+        self.output_widgets = widgets.VBox([self.output_area])
 
-        self.children = [
-            widgets.VBox([
-                widgets.HBox(self.input_widgets + [self.button]),
-                self.output_area
-            ])
-        ]
+        self.row_widgets = widgets.HBox(self.input_widgets +
+                                        self.button_widgets)
+        self.row_widgets.layout.flex_flow = 'row wrap'
+
+        self.children = [self.row_widgets, self.output_widgets]
 
     def _setup_input_widgets(self, inputs):
         """
@@ -80,26 +159,22 @@ class ProcessWidget(FunctionWrapperWidget):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callable: Callable, name: str, inputs):
+    def __init__(self, callable: Callable, name: str, inputs, hide_code=False):
         """
         Parameters:
         callable (Callable): The function to call
         name: name of widget to display
         inputs (Input object): class containing input data
         """
-        super().__init__(callable, name, inputs)
+        super().__init__(callable, name, inputs, hide_code=hide_code)
         self.scope = get_notebook_global_scope()
 
         self.output = widgets.Text(placeholder='output name',
                                    value='',
                                    continuous_update=False)
-
-        self.children = [
-            widgets.VBox([
-                widgets.HBox(self.input_widgets + [self.output, self.button]),
-                self.output_area
-            ])
-        ]
+        self.row_widgets.children = self.input_widgets + [
+            self.output
+        ] + self.button_widgets
 
     def _process(self, kwargs):
         """
@@ -120,44 +195,3 @@ class ProcessWidget(FunctionWrapperWidget):
 
 # Method to hide code blocks taken from
 # https://stackoverflow.com/questions/27934885/how-to-hide-code-from-cells-in-ipython-notebook-visualized-with-nbviewer
-javascript_functions = {False: "hide()", True: "show()"}
-button_descriptions = {False: "Show code", True: "Hide code"}
-
-
-def toggle_code(state):
-    """
-    Toggles the JavaScript show()/hide() function on the div.input element.
-    """
-
-    output_string = "<script>$(\"div.input\").{}</script>"
-    output_args = (javascript_functions[state], )
-    output = output_string.format(*output_args)
-
-    display(HTML(output))
-
-
-def button_action(value):
-    """
-    Calls the toggle_code function and updates the button description.
-    """
-
-    state = value.new
-
-    toggle_code(state)
-
-    value.owner.description = button_descriptions[state]
-
-
-def setup_code_hiding():
-    """
-    Sets up the hiding of code blocks in the notebook at
-    any point after this is called. Toggled by the button
-    this creates.
-    """
-    state = False
-    toggle_code(state)
-
-    button = widgets.ToggleButton(state,
-                                  description=button_descriptions[state])
-    button.observe(button_action, "value")
-    return button
