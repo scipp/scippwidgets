@@ -1,5 +1,5 @@
 package:
-  name: scwidgets
+  name: scipp_widgets
   version: { { GIT_DESCRIBE_TAG } }
 
 source:
@@ -13,7 +13,7 @@ requirements:
 
 test:
   import:
-    - scwidgets
+    - scipp_widgets
   requires:
     - pytest
   source_files:

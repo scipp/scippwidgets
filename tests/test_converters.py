@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 
 import pytest
-from scwidgets.converters import (filepath_converter, scope_converter,
+from scipp_widgets.converters import (filepath_converter, scope_converter,
                                   typed_scope_converter,
                                   string_allowed_values_converter)
 
