@@ -39,8 +39,8 @@ class ValueValidator():
 
     def __call__(self, input):
         if input not in self.allowed_values:
-            raise ValueError(
-                f'{input} is invalid. Allowed values are{self.allowed_values}')
+            raise ValueError(f'{input} is invalid. Allowed values are: '
+                             f'{self.allowed_values}')
         return input
 
 
@@ -55,7 +55,7 @@ class FilepathValidator():
         path = pathlib.Path(input)
 
         if path.is_file():
-            return path
+            return str(path)
 
         path = self.data_directory / path
 
