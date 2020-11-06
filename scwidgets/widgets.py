@@ -29,46 +29,6 @@ def toggle_code(state, output_widget=None):
         display(Javascript(output))
 
 
-def toggle_code_test(state):
-    """
-    Toggles the JavaScript show()/hide() function on the div.input element.
-    """
-    output_string = "this.element.closest('.cell').children('.input').{}"
-    output_args = (javascript_functions[state], )
-    output = output_string.format(*output_args)
-    display(Javascript(output))
-
-
-def button_action(value):
-    """
-    Calls the toggle_code function and updates the button description.
-    """
-    state = value.new
-
-    toggle_code(state)
-
-
-def create_hide_button(state):
-    """
-    Sets up the hiding of code blocks in the notebook at
-    any point after this is called. Toggled by the button
-    this creates.
-    """
-    box = widgets.Box()
-
-    output = widgets.Output()
-    button = widgets.ToggleButton(state, description='Py')
-    button.observe(button_action, "value")
-    button.layout.flex = '0 1 5%'
-    button.layout.align_self = 'flex-end'
-
-    box.children = [button, output]
-    box.layout.align_self = 'flex-end'
-
-    toggle_code(state, output)
-    return
-
-
 class HideCodeWidget(widgets.Box):
     def __init__(self, state):
         super().__init__()
@@ -126,12 +86,7 @@ class FunctionWrapperWidget(widgets.Box):
         options are set based on the options dict.
         """
         for input in inputs:
-            placeholder = input.tooltip
-            option = input.options
-            self.input_widgets.append(
-                widgets.Combobox(placeholder=placeholder,
-                                 continuous_update=False,
-                                 options=option))
+            self.input_widgets.append(input.create_input_widget())
 
     def _retrive_kwargs(self):
         kwargs = {
