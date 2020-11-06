@@ -46,7 +46,7 @@ class HideCodeWidget(widgets.Box):
         toggle_code(value.new, self.output_widget)
 
 
-class FunctionWrapperWidget(widgets.Box):
+class DisplayWidget(widgets.Box):
     """
     Provides a simple graphical wrapper around a given callable.
     """
@@ -110,7 +110,7 @@ class FunctionWrapperWidget(widgets.Box):
         display(self.callable(**kwargs))
 
 
-class ProcessWidget(FunctionWrapperWidget):
+class ProcessWidget(DisplayWidget):
     """
     Provides a simple graphical wrapper around a given callable.
     """
