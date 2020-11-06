@@ -4,11 +4,9 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-import scipp as sc
-from scipp.plot import plot
 from .inputs import get_notebook_global_scope
-from IPython.core.display import display, HTML, Javascript
-from typing import (Any, Mapping, Callable, Sequence, MutableMapping)
+from IPython.core.display import display, Javascript
+from typing import Callable
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -50,7 +48,7 @@ class DisplayWidget(widgets.Box):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callable: Callable, name: str, inputs, hide_code=False):
+    def __init__(self, callab, name: str, inputs, hide_code=False):
         """
         Parameters:
         callable (Callable): The function to call
