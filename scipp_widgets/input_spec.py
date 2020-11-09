@@ -46,7 +46,7 @@ class InputSpec():
     def validate(self, input):
         """
         Validates the user input. Throws if invalid,
-        other wise returns the input with pre-processing
+        otherwise returns the input with pre-processing
         applied if applicable
         """
         return self._validator(input)
