@@ -3,44 +3,57 @@
 # @file
 # @author Matthew Andrew
 import ipywidgets as widgets
+from abc import ABC, abstractmethod
 
 
-class Input():
+class IInputSpec(ABC):
+    """
+    Interfaces detailing which methods and properties as
+    InputSpecifier must have.
+    """
+    @abstractmethod
+    def validator(self, input):
+        pass
+
+    @abstractmethod
+    def create_input_widget(self):
+        pass
+
+    @property
+    @abstractmethod
+    def name(self):
+        pass
+
+
+class InputSpec(IInputSpec):
     def __init__(self,
                  name,
                  validator=lambda input: input,
                  options=(),
-                 tooltip=''):
-        self.name = name
-        self.validator = validator
+                 tooltip='',
+                 eval_input=False,
+                 scope={}):
+        self._name = name
         self._options = options
         self._tooltip = tooltip if tooltip else name
+
+        if eval_input:
+            self._scope = scope if scope else get_notebook_global_scope()
+            self._validator = lambda input: validator(eval(input, scope))
+        else:
+            self._validator = validator
 
     def create_input_widget(self):
         return widgets.Combobox(placeholder=self._tooltip,
                                 continuous_update=False,
                                 options=self._options)
-
-
-class EvalInput():
-    def __init__(self,
-                 name,
-                 validator=lambda input: input,
-                 options=(),
-                 tooltip=''):
-        self.name = name
-        self._validator = validator
-        self._options = options
-        self._tooltip = tooltip if tooltip else name
-        self._scope = get_notebook_global_scope()
 
     def validator(self, input):
-        return self._validator(eval(input, self._scope))
+        return self._validator(input)
 
-    def create_input_widget(self):
-        return widgets.Combobox(placeholder=self._tooltip,
-                                continuous_update=False,
-                                options=self._options)
+    @property
+    def name(self):
+        return self._name
 
 
 def get_notebook_global_scope():
