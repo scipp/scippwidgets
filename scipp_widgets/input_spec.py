@@ -3,29 +3,12 @@
 # @file
 # @author Matthew Andrew
 import ipywidgets as widgets
-from abc import ABC, abstractmethod
 
 
-class IInputSpec(ABC):
+class InputSpec():
     """
-    Interfaces detailing which methods and properties as
-    InputSpecifier must have.
+    Controls creation and validaton of user-input widgets.
     """
-    @abstractmethod
-    def validator(self, input):
-        pass
-
-    @abstractmethod
-    def create_input_widget(self):
-        pass
-
-    @property
-    @abstractmethod
-    def name(self):
-        pass
-
-
-class InputSpec(IInputSpec):
     def __init__(self,
                  name,
                  validator=lambda input: input,
@@ -33,26 +16,46 @@ class InputSpec(IInputSpec):
                  tooltip='',
                  eval_input=False,
                  scope={}):
+        """
+        Parameters:
+        name (str): Name of function argument this input corresponds to.
+        validator (Callable[[str], Any]): Validator function.
+        options (List[str]): List of dropdown options.
+        tooltip (str): Widget placeholder text.
+        eval_input (bool): Toggles evaluating input in calling scope.
+        scope (Dict[str: Any]): Non default scope to use for evaluation.
+        """
         self._name = name
         self._options = options
         self._tooltip = tooltip if tooltip else name
 
         if eval_input:
-            self._scope = scope if scope else get_notebook_global_scope()
+            scope = scope if scope else get_notebook_global_scope()
             self._validator = lambda input: validator(eval(input, scope))
         else:
             self._validator = validator
 
     def create_input_widget(self):
+        """
+        Creates and returns the relevant user-input ipywidget.
+        """
         return widgets.Combobox(placeholder=self._tooltip,
                                 continuous_update=False,
                                 options=self._options)
 
-    def validator(self, input):
+    def validate(self, input):
+        """
+        Validates the user input. Throws if invalid,
+        other wise returns the input with pre-processing
+        applied if applicable
+        """
         return self._validator(input)
 
     @property
     def name(self):
+        """
+        Property holding name of function argument this input corresponds to.
+        """
         return self._name
 
 

@@ -4,9 +4,8 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .inputs import get_notebook_global_scope
+from .input_spec import get_notebook_global_scope
 from IPython.core.display import display, Javascript
-from typing import Callable
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -28,6 +27,9 @@ def toggle_code(state, output_widget=None):
 
 
 class HideCodeWidget(widgets.Box):
+    """
+    Button which toggles the visibilty of code block.
+    """
     def __init__(self, state):
         super().__init__()
         self.output_widget = widgets.Output()
@@ -48,19 +50,19 @@ class DisplayWidget(widgets.Box):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callable, name: str, inputs, hide_code=False):
+    def __init__(self, callable, name: str, input_specs, hide_code=False):
         """
         Parameters:
         callable (Callable): The function to call
-        name: name of widget to display
-        inputs (Input object): class containing input data
+        name (str): name of widget to display
+        input_specs (list): class containing input data
         """
         super().__init__()
         self.layout.flex_flow = 'column'
         self.callable = callable
-        self.inputs = inputs
+        self.input_specs = input_specs
         self.input_widgets = []
-        self._setup_input_widgets(inputs)
+        self._setup_input_widgets(input_specs)
 
         self.button = widgets.Button(description=name)
         self.button.on_click(self._on_button_clicked)
@@ -79,17 +81,15 @@ class DisplayWidget(widgets.Box):
 
     def _setup_input_widgets(self, inputs):
         """
-        Creates a Combobox widget for each entry in the inputs dict.
-        The placeholder is set based on the descriptions dict and the
-        options are set based on the options dict.
+        Creates a user-input widget for each item in inputs
         """
-        for input in inputs:
-            self.input_widgets.append(input.create_input_widget())
+        for spec in inputs:
+            self.input_widgets.append(spec.create_input_widget())
 
     def _retrive_kwargs(self):
         kwargs = {
-            input.name: input.validator(item.value)
-            for input, item in zip(self.inputs, self.input_widgets)
+            spec.name: spec.validate(widget.value)
+            for spec, widget in zip(self.input_specs, self.input_widgets)
         }
         return kwargs
 
@@ -112,12 +112,12 @@ class ProcessWidget(DisplayWidget):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callable: Callable, name: str, inputs, hide_code=False):
+    def __init__(self, callable, name: str, inputs, hide_code=False):
         """
         Parameters:
         callable (Callable): The function to call
-        name: name of widget to display
-        inputs (Input object): class containing input data
+        name (str): name of widget to display
+        inputs (list): class containing input data
         """
         super().__init__(callable, name, inputs, hide_code=hide_code)
         self.scope = get_notebook_global_scope()
@@ -131,11 +131,11 @@ class ProcessWidget(DisplayWidget):
 
     def _process(self, kwargs):
         """
-            Calls the wrapped function using the
-            parameter values specified.
+        Calls the wrapped function using the
+        parameter values specified.
 
-            Returns: Output of the wrapped callable.
-            """
+        Returns: Output of the wrapped callable.
+        """
         if self.output.value:
             output_name = self.output.value
         else:
@@ -144,7 +144,3 @@ class ProcessWidget(DisplayWidget):
 
         self.scope[output_name] = self.callable(**kwargs)
         display(self.scope[output_name])
-
-
-# Method to hide code blocks taken from
-# https://stackoverflow.com/questions/27934885/how-to-hide-code-from-cells-in-ipython-notebook-visualized-with-nbviewer

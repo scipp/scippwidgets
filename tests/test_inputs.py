@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.inputs import InputSpec
+from scipp_widgets.input_spec import InputSpec
 
 
 def test_InputSpec_creates_widget_with_correct_properties():
@@ -24,4 +24,4 @@ def test_setting_eval_true_evaluates_expression_in_scope():
     scope = {'test_obj': [1, 2, 3, 45]}
     input_spec = InputSpec(name=name, eval_input=True, scope=scope)
 
-    assert input_spec.validator('test_obj') == eval('test_obj', scope)
+    assert input_spec.validate('test_obj') == eval('test_obj', scope)
