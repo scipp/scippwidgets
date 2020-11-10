@@ -1,6 +1,6 @@
 package:
-  name: scwidgets
-  version: "1"
+  name: scipp_widgets
+  version: {{ GIT_DESCRIBE_TAG }}
 
 source:
   path: ..
@@ -16,9 +16,10 @@ requirements:
 
 test:
   import:
-    - scwidgets
-    - scwidgets.converters
-    - scwidgets.widgets
+    - scipp_widgets
+    - scipp_widgets.input_spec
+    - scipp_widgets.validators
+    - scipp_widgets.widgets
   requires:
     - pytest
   source_files:
