@@ -1,1 +1,1 @@
-mv scwidgets "$CONDA_PREFIX"/lib/python*/
+mv scipp_widgets "$CONDA_PREFIX"/lib/python*/

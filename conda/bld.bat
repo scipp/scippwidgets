@@ -1,1 +1,1 @@
-move scwidgets %CONDA_PREFIX%\lib\
+move scipp_widgets %CONDA_PREFIX%\lib\
