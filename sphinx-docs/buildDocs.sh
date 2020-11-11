@@ -41,51 +41,47 @@ export REPO_NAME="${GITHUB_REPOSITORY##*/}"
 make -C sphinx-docs clean
  
 # get a list of branches, excluding 'HEAD' and 'gh-pages'
-versions="`git for-each-ref '--format=%(refname:lstrip=-1)' refs/remotes/origin/ | grep -viE '^(HEAD|gh-pages)$'`"
-for current_version in ${versions}; do
+# versions="`git for-each-ref '--format=%(refname:lstrip=-1)' refs/remotes/origin/ | grep -viE '^(HEAD|gh-pages)$'`"
+# for current_version in ${versions}; do
+current_version = "master"
  
-   # make the current language available to conf.py
-   export current_version
-   git checkout ${current_version}
+# make the version language available to conf.py
+export current_version
+git checkout ${current_version}
+
+echo "INFO: Building sites for ${current_version}"
+
  
-   echo "INFO: Building sites for ${current_version}"
+# languages="en `find docs/locales/ -mindepth 1 -maxdepth 1 -type d -exec basename '{}' \;`"
+# for current_language in ${languages}; do
+current_language = "en"
+# make the current language available to conf.py
+export current_language
+
+##########
+# BUILDS #
+##########
+echo "INFO: Building for ${current_language}"
+
+# HTML #
+sphinx-build -b html sphinx-docs/ sphinx-docs/_build/html/${current_language}/${current_version} -D language="${current_language}"
+
+# PDF #
+sphinx-build -b rinoh sphinx-docs/ sphinx-docs/_build/rinoh -D language="${current_language}"
+mkdir -p "${docroot}/${current_language}/${current_version}"
+cp "sphinx-docs/_build/rinoh/target.pdf" "${docroot}/${current_language}/${current_version}/helloWorld-docs_${current_language}_${current_version}.pdf"
+
+# EPUB #
+sphinx-build -b epub sphinx-docs/ sphinx-docs/_build/epub -D language="${current_language}"
+mkdir -p "${docroot}/${current_language}/${current_version}"
+cp "sphinx-docs/_build/epub/target.epub" "${docroot}/${current_language}/${current_version}/helloWorld-docs_${current_language}_${current_version}.epub"
+
+# copy the static assets produced by the above build into our docroot
+rsync -av "sphinx-docs/_build/html/" "${docroot}/"
  
-   # skip this branch if it doesn't have our docs dir & sphinx config
-   if [ ! -e 'sphinx-docs/conf.py' ]; then
-      echo -e "\tINFO: Couldn't find 'sphinx-docs/conf.py' (skipped)"
-      continue
-   fi
+#    done
  
-   languages="en `find docs/locales/ -mindepth 1 -maxdepth 1 -type d -exec basename '{}' \;`"
-   for current_language in ${languages}; do
- 
-      # make the current language available to conf.py
-      export current_language
- 
-      ##########
-      # BUILDS #
-      ##########
-      echo "INFO: Building for ${current_language}"
- 
-      # HTML #
-      sphinx-build -b html sphinx-docs/ sphinx-docs/_build/html/${current_language}/${current_version} -D language="${current_language}"
- 
-      # PDF #
-      sphinx-build -b rinoh sphinx-docs/ sphinx-docs/_build/rinoh -D language="${current_language}"
-      mkdir -p "${docroot}/${current_language}/${current_version}"
-      cp "sphinx-docs/_build/rinoh/target.pdf" "${docroot}/${current_language}/${current_version}/helloWorld-docs_${current_language}_${current_version}.pdf"
- 
-      # EPUB #
-      sphinx-build -b epub sphinx-docs/ sphinx-docs/_build/epub -D language="${current_language}"
-      mkdir -p "${docroot}/${current_language}/${current_version}"
-      cp "sphinx-docs/_build/epub/target.epub" "${docroot}/${current_language}/${current_version}/helloWorld-docs_${current_language}_${current_version}.epub"
- 
-      # copy the static assets produced by the above build into our docroot
-      rsync -av "sphinx-docs/_build/html/" "${docroot}/"
- 
-   done
- 
-done
+# done
  
 # return to master branch
 git checkout master
