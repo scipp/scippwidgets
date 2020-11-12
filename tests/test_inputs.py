@@ -19,9 +19,9 @@ def test_InputSpec_creates_widget_with_correct_properties():
     assert input_spec.name == name
 
 
-def test_setting_eval_true_evaluates_expression_in_scope():
+def test_InputSpec_evaluates_expression_in_scope():
     name = 'test_input'
     scope = {'test_obj': [1, 2, 3, 45]}
-    input_spec = InputSpec(name=name, eval_input=True, scope=scope)
+    input_spec = InputSpec(name=name, scope=scope)
 
     assert input_spec.validate('test_obj') == eval('test_obj', scope)

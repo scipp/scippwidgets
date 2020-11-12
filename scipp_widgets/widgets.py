@@ -46,25 +46,31 @@ class HideCodeWidget(widgets.Box):
         toggle_code(value.new, self.output_widget)
 
 
-class DisplayWidget(widgets.Box):
+class WidgetBase(widgets.Box):
     """
-    Provides a simple graphical wrapper around a given callable.
+    Abstract base class for scipp-widgets
     """
-    def __init__(self, callable, name: str, input_specs, hide_code=False):
+    def __init__(self,
+                 wrapped_func,
+                 input_specs,
+                 button_name: str = '',
+                 hide_code=False):
         """
         Parameters:
-        callable (Callable): The function to call
-        name (str): name of widget to display
+        wrapped_func (Callable): The function to call
         input_specs (list): class containing input data
+        name (str): name of widget to display
+        hide_code (bool): hide the code block containing this class
         """
         super().__init__()
         self.layout.flex_flow = 'column'
-        self.callable = callable
+        self.callable = wrapped_func
         self.input_specs = input_specs
         self.input_widgets = []
         self._setup_input_widgets(input_specs)
 
-        self.button = widgets.Button(description=name)
+        button_name = button_name if button_name else wrapped_func.__name__
+        self.button = widgets.Button(description=button_name)
         self.button.on_click(self._on_button_clicked)
         self.button_widgets = [self.button]
         if (hide_code):
@@ -86,7 +92,7 @@ class DisplayWidget(widgets.Box):
         for spec in inputs:
             self.input_widgets.append(spec.create_input_widget())
 
-    def _retrive_kwargs(self):
+    def _retrieve_kwargs(self):
         kwargs = {
             spec.name: spec.validate(widget.value)
             for spec, widget in zip(self.input_specs, self.input_widgets)
@@ -97,7 +103,7 @@ class DisplayWidget(widgets.Box):
         self.output_area.clear_output()
         with self.output_area:
             try:
-                kwargs = self._retrive_kwargs()
+                kwargs = self._retrieve_kwargs()
             except ValueError as e:
                 print(f'Invalid inputs: {e}')
                 return
@@ -105,22 +111,53 @@ class DisplayWidget(widgets.Box):
             self._process(kwargs)
 
     def _process(self, kwargs):
-        display(self.callable(**kwargs))
+        pass
 
 
-class ProcessWidget(DisplayWidget):
+class DisplayWidget(WidgetBase):
     """
     Provides a simple graphical wrapper around a given callable.
     """
-    def __init__(self, callable, name: str, inputs, hide_code=False):
+    def __init__(self,
+                 wrapped_func,
+                 input_specs,
+                 button_name: str = '',
+                 hide_code=False):
         """
         Parameters:
-        callable (Callable): The function to call
+        wrapped_func (Callable): The function to call
+        input_specs (list): class containing input data
         name (str): name of widget to display
-        inputs (list): class containing input data
+        hide_code (bool): hide the code block containing this class
         """
-        super().__init__(callable, name, inputs, hide_code=hide_code)
-        self.scope = get_notebook_global_scope()
+        super().__init__(wrapped_func, input_specs, button_name, hide_code)
+
+    def _process(self, kwargs):
+        display(self.callable(**kwargs))
+
+
+class ProcessWidget(WidgetBase):
+    """
+    Provides a simple graphical wrapper around a given callable.
+    """
+    def __init__(self,
+                 wrapped_func,
+                 input_specs,
+                 button_name: str = '',
+                 hide_code=False,
+                 scope={}):
+        """
+        Parameters:
+        wrapped_func (Callable): The function to call
+        inputs (list): class containing input data
+        button_name (str): name of widget to display
+        hide_code (bool): hide the code block containing this class
+        """
+        super().__init__(wrapped_func,
+                         input_specs,
+                         button_name,
+                         hide_code=hide_code)
+        self.scope = scope if scope else get_notebook_global_scope()
 
         self.output = widgets.Text(placeholder='output name',
                                    value='',
@@ -133,8 +170,6 @@ class ProcessWidget(DisplayWidget):
         """
         Calls the wrapped function using the
         parameter values specified.
-
-        Returns: Output of the wrapped callable.
         """
         if self.output.value:
             output_name = self.output.value

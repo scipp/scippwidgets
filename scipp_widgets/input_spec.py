@@ -5,35 +5,23 @@
 import ipywidgets as widgets
 
 
-class InputSpec():
+class InputSpecComboboxBase():
     """
     Controls creation and validaton of user-input widgets.
     """
-    def __init__(self,
-                 name,
-                 validator=lambda input: input,
-                 options=(),
-                 tooltip='',
-                 eval_input=False,
-                 scope={}):
+    def __init__(self, name, options=(), tooltip='', scope={}):
         """
         Parameters:
         name (str): Name of function argument this input corresponds to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
         tooltip (str): Widget placeholder text.
-        eval_input (bool): Toggles evaluating input in calling scope.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
         self._name = name
         self._options = options
         self._tooltip = tooltip if tooltip else name
-
-        if eval_input:
-            scope = scope if scope else get_notebook_global_scope()
-            self._validator = lambda input: validator(eval(input, scope))
-        else:
-            self._validator = validator
+        self._validator = lambda input: input
 
     def create_input_widget(self):
         """
@@ -57,6 +45,53 @@ class InputSpec():
         Property holding name of function argument this input corresponds to.
         """
         return self._name
+
+
+class StringInputSpec(InputSpecComboboxBase):
+    """
+    Controls creation and validaton of user-input widgets.
+    Processed raw string as input.
+    """
+    def __init__(self,
+                 name,
+                 validator=lambda input: input,
+                 options=(),
+                 tooltip='',
+                 scope={}):
+        """
+        Parameters:
+        name (str): Name of function argument this input corresponds to.
+        validator (Callable[[str], Any]): Validator function.
+        options (List[str]): List of dropdown options.
+        tooltip (str): Widget placeholder text.
+        scope (Dict[str: Any]): Non default scope to use for evaluation.
+        """
+        super().__init__(name, options, tooltip, scope)
+        self._validator = validator
+
+
+class InputSpec(InputSpecComboboxBase):
+    """
+    Controls creation and validaton of user-input widgets.
+    Evaluates input string in scope
+    """
+    def __init__(self,
+                 name,
+                 validator=lambda input: input,
+                 options=(),
+                 tooltip='',
+                 scope={}):
+        """
+        Parameters:
+        name (str): Name of function argument this input corresponds to.
+        validator (Callable[[str], Any]): Validator function.
+        options (List[str]): List of dropdown options.
+        tooltip (str): Widget placeholder text.
+        scope (Dict[str: Any]): Non default scope to use for evaluation.
+        """
+        super().__init__(name, options, tooltip, scope)
+        scope = scope if scope else get_notebook_global_scope()
+        self._validator = lambda input: validator(eval(input, scope))
 
 
 def get_notebook_global_scope():
