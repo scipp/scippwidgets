@@ -9,12 +9,7 @@ class InputSpecComboboxBase():
     """
     Controls creation and validaton of user-input widgets.
     """
-    def __init__(self,
-                 name,
-                 options=(),
-                 tooltip='',
-                 eval_input=False,
-                 scope={}):
+    def __init__(self, name, options=(), tooltip='', scope={}):
         """
         Parameters:
         name (str): Name of function argument this input corresponds to.
@@ -62,7 +57,6 @@ class StringInputSpec(InputSpecComboboxBase):
                  validator=lambda input: input,
                  options=(),
                  tooltip='',
-                 eval_input=False,
                  scope={}):
         """
         Parameters:
@@ -72,7 +66,7 @@ class StringInputSpec(InputSpecComboboxBase):
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(name, options, tooltip, eval_input, scope)
+        super().__init__(name, options, tooltip, scope)
         self._validator = validator
 
 
@@ -86,7 +80,6 @@ class InputSpec(InputSpecComboboxBase):
                  validator=lambda input: input,
                  options=(),
                  tooltip='',
-                 eval_input=False,
                  scope={}):
         """
         Parameters:
@@ -96,7 +89,7 @@ class InputSpec(InputSpecComboboxBase):
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(name, options, tooltip, eval_input, scope)
+        super().__init__(name, options, tooltip, scope)
         scope = scope if scope else get_notebook_global_scope()
         self._validator = lambda input: validator(eval(input, scope))
 
