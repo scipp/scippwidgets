@@ -35,3 +35,15 @@ stages:
               PathtoPublish: "$(conda_dir)/conda-bld/linux-64"
               ArtifactName: "linux-64"
             displayName: "Publish Conda package artefacts"
+
+  - stage: "post_build_checks"
+    displayName: "Post Build Checks"
+
+    jobs:
+      - template: templates/documentation_build.yml
+
+  - stage: "deploy"
+    displayName: "Deployment"
+
+    jobs:
+      - template: templates/documentation_deploy.yml
