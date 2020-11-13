@@ -93,10 +93,9 @@ class WidgetBase(widgets.Box):
             self.input_widgets.append(spec.create_input_widget())
 
     def _retrieve_kwargs(self):
-        kwargs = {
-            spec.name: spec.validate(widget.value)
-            for spec, widget in zip(self.input_specs, self.input_widgets)
-        }
+        kwargs = {}
+        for input in self.input_specs:
+            kwargs.update(input.function_arguments())
         return kwargs
 
     def _on_button_clicked(self, button):

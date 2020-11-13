@@ -47,6 +47,12 @@ class ValueValidator():
 scipp_object_validator = TypeValidator(scipp_object)
 
 
+def has_attr_validator(input, attr):
+    if hasattr(input, attr):
+        return input
+    raise ValueError(f'{input} does not have require attribute {attr}')
+
+
 class FilepathValidator():
     def __init__(self, data_directory=pathlib.Path.cwd()):
         self.data_directory = data_directory
