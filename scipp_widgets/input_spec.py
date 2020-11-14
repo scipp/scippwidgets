@@ -8,6 +8,15 @@ from typing import Any, Sequence, MutableMapping, Dict, Callable
 from abc import ABC, abstractmethod
 
 
+def _wrapped_eval(input, scope):
+    if not input:
+        raise ValueError('Mandatory input field is empty.')
+    try:
+        return eval(input, scope)
+    except NameError:
+        raise ValueError(f"Object of name '{input}' not found in scope.")
+
+
 class IInputSpec(ABC):
     """
     Interfaces detailing which methods and properties an
@@ -77,7 +86,7 @@ class StringInputSpec(InputSpecComboboxBase):
                  scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        function_arg_name (str): Name of function argument this 
+        function_arg_name (str): Name of function argument this
         input corresponds to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
@@ -101,7 +110,7 @@ class InputSpec(InputSpecComboboxBase):
                  scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        function_arg_name (str): Name of function argument 
+        function_arg_name (str): Name of function argument
         this input maps to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
@@ -110,7 +119,7 @@ class InputSpec(InputSpecComboboxBase):
         """
         super().__init__(function_arg_name, options, tooltip, scope)
         scope = scope if scope else get_notebook_global_scope()
-        self._validator = lambda input: validator(eval(input, scope))
+        self._validator = lambda input: validator(_wrapped_eval(input, scope))
 
 
 class ScippInputWithDimSpec(IInputSpec):
@@ -157,15 +166,14 @@ class ScippInputWithDimSpec(IInputSpec):
             pass
 
     def _scipp_obj_validator(self, input):
-        try:
-            scipp_object = eval(input, self._scope)
-            scipp_object_validator(scipp_object)
-            has_attr_validator(scipp_object, 'dims')
-            return scipp_object
-        except SyntaxError:
-            raise ValueError('data object must be specified')
+        scipp_object = _wrapped_eval(input, self._scope)
+        scipp_object_validator(scipp_object)
+        has_attr_validator(scipp_object, 'dims')
+        return scipp_object
 
     def _dims_validator(self, input):
+        if not input:
+            raise ValueError('No dimension selected')
         if input in self._allowed_dims:
             return input
         else:
