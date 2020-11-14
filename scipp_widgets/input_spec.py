@@ -5,9 +5,26 @@
 import ipywidgets as widgets
 from scipp_widgets.validators import scipp_object_validator, has_attr_validator
 from typing import Any, Sequence, MutableMapping, Dict, Callable
+from abc import ABC, abstractmethod
 
 
-class InputSpecComboboxBase():
+class IInputSpec(ABC):
+    """
+    Interfaces detailing which methods and properties an
+    input specification must have.
+    """
+    @property
+    @abstractmethod
+    def widget(self):
+        pass
+
+    @property
+    @abstractmethod
+    def function_arguments(self):
+        pass
+
+
+class InputSpecComboboxBase(IInputSpec):
     """
     Controls creation and validaton of user-input widgets.
     """
@@ -28,9 +45,9 @@ class InputSpecComboboxBase():
         self._options = options
         self._tooltip = tooltip if tooltip else function_arg_name
         self._validator = lambda input: input
-        self.widget = widgets.Combobox(placeholder=self._tooltip,
-                                       continuous_update=False,
-                                       options=self._options)
+        self._widget = widgets.Combobox(placeholder=self._tooltip,
+                                        continuous_update=False,
+                                        options=self._options)
 
     @property
     def function_arguments(self) -> Dict[str, Any]:
@@ -38,6 +55,13 @@ class InputSpecComboboxBase():
         Return function arguments as dict of arg_name: arg_value
         """
         return {self._name: self._validator(self.widget.value)}
+
+    @property
+    def widget(self):
+        """
+        Returns constructed used-input widget
+        """
+        return self._widget
 
 
 class StringInputSpec(InputSpecComboboxBase):
@@ -50,10 +74,11 @@ class StringInputSpec(InputSpecComboboxBase):
                  validator: Callable[[str], str] = lambda input: input,
                  options: Sequence[str] = (),
                  tooltip: str = '',
-                 scope: MutableMapping[str:Any] = {}):
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        function_arg_name (str): Name of function argument this input corresponds to.
+        function_arg_name (str): Name of function argument this 
+        input corresponds to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
         tooltip (str): Widget placeholder text.
@@ -73,21 +98,22 @@ class InputSpec(InputSpecComboboxBase):
                  validator: Callable[[Any], Any] = lambda input: input,
                  options: Sequence[str] = (),
                  tooltip: str = '',
-                 scope: MutableMapping[str:Any] = {}):
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        function_arg_name (str): Name of function argument this input corresponds to.
+        function_arg_name (str): Name of function argument 
+        this input maps to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(name, options, tooltip, scope)
+        super().__init__(function_arg_name, options, tooltip, scope)
         scope = scope if scope else get_notebook_global_scope()
         self._validator = lambda input: validator(eval(input, scope))
 
 
-class ScippInputWithDimSpec():
+class ScippInputWithDimSpec(IInputSpec):
     """
     Input widget which takes a scipp object and a linked
     dimension field.
@@ -104,7 +130,7 @@ class ScippInputWithDimSpec():
                                                  continuous_update=False)
         self._scipp_obj_input.observe(self._handle_scipp_obj_change,
                                       names='value')
-        self.widget = widgets.HBox(
+        self._widget = widgets.HBox(
             [self._scipp_obj_input, self._dimension_input])
         self._validators = (self._scipp_obj_validator, self._dims_validator)
         self._allowed_dims = []
@@ -116,6 +142,10 @@ class ScippInputWithDimSpec():
             for name, widget, validator in zip(
                 self._func_arg_names, self.widget.children, self._validators)
         }
+
+    @property
+    def widget(self):
+        return self._widget
 
     def _handle_scipp_obj_change(self, change):
         try:
@@ -130,7 +160,7 @@ class ScippInputWithDimSpec():
         try:
             scipp_object = eval(input, self._scope)
             scipp_object_validator(scipp_object)
-            has_attr_validator(scipp_object, 'dim')
+            has_attr_validator(scipp_object, 'dims')
             return scipp_object
         except SyntaxError:
             raise ValueError('data object must be specified')
@@ -139,9 +169,8 @@ class ScippInputWithDimSpec():
         if input in self._allowed_dims:
             return input
         else:
-            raise ValueError(
-                f'Dimension {input} does no exist in {self._scipp_obj_input.value}'
-            )
+            raise ValueError(f'Dimension {input} does no exist in'
+                             f' {self._scipp_obj_input.value}')
 
 
 def get_notebook_global_scope():

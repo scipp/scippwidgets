@@ -4,9 +4,9 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .input_spec import get_notebook_global_scope
+from .input_spec import get_notebook_global_scope, IInputSpec
 from IPython.core.display import display, Javascript
-from typing import Any, Sequence, MutableMapping, Dict, Callable
+from typing import Any, MutableMapping, Callable, Iterable
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -53,7 +53,7 @@ class WidgetBase(widgets.Box):
     """
     def __init__(self,
                  wrapped_func: Callable,
-                 input_specs,
+                 input_specs: Iterable[IInputSpec],
                  button_name: str = '',
                  hide_code: bool = False):
         """
@@ -120,7 +120,7 @@ class DisplayWidget(WidgetBase):
     """
     def __init__(self,
                  wrapped_func: Callable,
-                 input_specs,
+                 input_specs: Iterable[IInputSpec],
                  button_name: str = '',
                  hide_code=False):
         """
@@ -142,10 +142,10 @@ class ProcessWidget(WidgetBase):
     """
     def __init__(self,
                  wrapped_func: Callable,
-                 input_specs,
+                 input_specs: Iterable[IInputSpec],
                  button_name: str = '',
                  hide_code: bool = False,
-                 scope: MutableMapping[str:Any] = {}):
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
         wrapped_func (Callable): The function to call
