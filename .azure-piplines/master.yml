@@ -1,13 +1,7 @@
 trigger:
-  branches:
-    exclude:
-      - "*"
+  - master
 
-pr:
-  autoCancel: true
-  branches:
-    include:
-      - "*"
+pr: none
 
 stages:
   - template: code_quality_checks.yml
