@@ -14,6 +14,8 @@ stages:
         timeoutInMinutes: 20
         pool:
           vmImage: "ubuntu-18.04"
+        variables:
+          - group: tokens
         steps:
           - checkout: self
             submodules: true
@@ -43,6 +45,8 @@ stages:
         timeoutInMinutes: 20
         pool:
           vmImage: "macOS-10.14"
+        variables:
+          - group: tokens
         steps:
           - checkout: self
             submodules: true
@@ -50,6 +54,9 @@ stages:
               echo "##vso[task.prependpath]$CONDA/bin"
               echo "##vso[task.setvariable variable=conda_dir]$CONDA"
             displayName: "Configure Conda directories"
+          - bash: |
+              sudo chown -R $USER $CONDA
+            displayName: "Take ownership of Conda installation"
           - bash: |
               set -ex
               conda --version
