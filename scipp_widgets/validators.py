@@ -28,8 +28,9 @@ class TypeValidator():
 
     def __call__(self, input):
         if not isinstance(input, self.allowed_types):
-            raise ValueError(f'{input} of invalid type. Valid types are'
-                             f': {self.allowed_types}')
+            raise ValueError(
+                f'{input} of invalid type {type(input)}. Valid types are'
+                f': {self.allowed_types}')
         return input
 
 

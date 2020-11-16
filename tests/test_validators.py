@@ -51,8 +51,8 @@ def test_typed_validator_throws_exception_if_object_is_not_allowed_type():
         dict_validator(test_object)
 
     assert str(
-        excinfo.value
-    ) == f'{test_object} of invalid type. Valid types are: {(dict, )}'
+        excinfo.value) == (f"{test_object} of invalid type <class 'list'>."
+                           " Valid types are: (<class 'dict'>,)")
 
 
 def test_string_allowed_values_converter():
