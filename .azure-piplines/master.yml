@@ -38,6 +38,35 @@ stages:
               ArtifactName: "linux-64"
             displayName: "Publish Conda package artefacts"
 
+      - job: "osx"
+        displayName: "Build package and test"
+        timeoutInMinutes: 20
+        pool:
+          vmImage: "macOS-10.14"
+        steps:
+          - checkout: self
+            submodules: true
+          - bash: |
+              echo "##vso[task.prependpath]$CONDA/bin"
+              echo "##vso[task.setvariable variable=conda_dir]$CONDA"
+            displayName: "Configure Conda directories"
+          - bash: |
+              set -ex
+              conda --version
+              conda install --yes anaconda-client conda-build
+              conda config --set always_yes yes --set changeps1 no
+            displayName: "conda configuration"
+          - bash: |
+              conda build conda/ --channel conda-forge --channel scipp/label/dev  --label dev --user scipp --token "$ANACONDA_TOKEN"
+            env:
+              ANACONDA_TOKEN: $(anaconda_token_secret)
+            displayName: "Conda Build"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(conda_dir)/conda-bld/osx-64"
+              ArtifactName: "osx-64"
+            displayName: "Publish Conda package artefacts"
+
   - stage: "post_build_checks"
     displayName: "Post Build Checks"
 
