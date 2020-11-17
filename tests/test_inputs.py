@@ -56,8 +56,8 @@ def test_ScippInputWithDimSpec_returns_correct_function_args():
                                        'input-data',
                                        scope=scope)
 
-    input_spec.widget.children[0].value = 'scipp_obj'
-    input_spec.widget.children[1].value = 'y'
+    input_spec.widget.children[0].value = u'scipp_obj'
+    input_spec.widget.children[1].value = u'y'
 
     assert input_spec.function_arguments == {'arg1': scipp_obj, 'arg2': 'y'}
 
@@ -70,8 +70,8 @@ def test_ScippInputWithDimSpec_throws_for_invalid_dimension():
                                        'input-data',
                                        scope=scope)
 
-    input_spec.widget.children[0].value = 'scipp_obj'
-    input_spec.widget.children[1].value = 'invalid'
+    input_spec.widget.children[0].value = u'scipp_obj'
+    input_spec.widget.children[1].value = u'invalid'
 
     with pytest.raises(ValueError) as exp:
         input_spec.function_arguments
