@@ -73,7 +73,7 @@ class InputSpecComboboxBase(IInputSpec):
         return self._widget
 
 
-class StringInputSpec(InputSpecComboboxBase):
+class TextInputSpec(InputSpecComboboxBase):
     """
     Controls creation and validaton of user-input widgets.
     Processed raw string as input.
