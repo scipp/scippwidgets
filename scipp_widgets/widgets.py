@@ -4,8 +4,9 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .input_spec import get_notebook_global_scope
+from .input_spec import get_notebook_global_scope, IInputSpec
 from IPython.core.display import display, Javascript
+from typing import Any, MutableMapping, Callable, Iterable
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -51,10 +52,10 @@ class WidgetBase(widgets.Box):
     Abstract base class for scipp-widgets
     """
     def __init__(self,
-                 wrapped_func,
-                 input_specs,
+                 wrapped_func: Callable,
+                 input_specs: Iterable[IInputSpec],
                  button_name: str = '',
-                 hide_code=False):
+                 hide_code: bool = False):
         """
         Parameters:
         wrapped_func (Callable): The function to call
@@ -90,13 +91,12 @@ class WidgetBase(widgets.Box):
         Creates a user-input widget for each item in inputs
         """
         for spec in inputs:
-            self.input_widgets.append(spec.create_input_widget())
+            self.input_widgets.append(spec.widget)
 
     def _retrieve_kwargs(self):
-        kwargs = {
-            spec.name: spec.validate(widget.value)
-            for spec, widget in zip(self.input_specs, self.input_widgets)
-        }
+        kwargs = {}
+        for input in self.input_specs:
+            kwargs.update(input.function_arguments)
         return kwargs
 
     def _on_button_clicked(self, button):
@@ -119,8 +119,8 @@ class DisplayWidget(WidgetBase):
     Provides a simple graphical wrapper around a given callable.
     """
     def __init__(self,
-                 wrapped_func,
-                 input_specs,
+                 wrapped_func: Callable,
+                 input_specs: Iterable[IInputSpec],
                  button_name: str = '',
                  hide_code=False):
         """
@@ -141,11 +141,11 @@ class ProcessWidget(WidgetBase):
     Provides a simple graphical wrapper around a given callable.
     """
     def __init__(self,
-                 wrapped_func,
-                 input_specs,
+                 wrapped_func: Callable,
+                 input_specs: Iterable[IInputSpec],
                  button_name: str = '',
-                 hide_code=False,
-                 scope={}):
+                 hide_code: bool = False,
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
         wrapped_func (Callable): The function to call

@@ -28,8 +28,9 @@ class TypeValidator():
 
     def __call__(self, input):
         if not isinstance(input, self.allowed_types):
-            raise ValueError(f'{input} of invalid type. Valid types are'
-                             f': {self.allowed_types}')
+            raise ValueError(
+                f'{input} of invalid type {type(input)}. Valid types are'
+                f': {self.allowed_types}')
         return input
 
 
@@ -45,6 +46,12 @@ class ValueValidator():
 
 
 scipp_object_validator = TypeValidator(scipp_object)
+
+
+def has_attr_validator(input, attr):
+    if hasattr(input, attr):
+        return input
+    raise ValueError(f'{input} does not have require attribute {attr}')
 
 
 class FilepathValidator():

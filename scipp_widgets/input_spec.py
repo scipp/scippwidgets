@@ -3,48 +3,74 @@
 # @file
 # @author Matthew Andrew
 import ipywidgets as widgets
+from scipp_widgets.validators import scipp_object_validator, has_attr_validator
+from typing import Any, Sequence, MutableMapping, Dict, Callable
+from abc import ABC, abstractmethod
 
 
-class InputSpecComboboxBase():
+def _wrapped_eval(input, scope):
+    if not input:
+        raise ValueError('Mandatory input field is empty.')
+    try:
+        return eval(input, scope)
+    except NameError:
+        raise ValueError(f"Object of name '{input}' not found in scope.")
+
+
+class IInputSpec(ABC):
+    """
+    Interfaces detailing which methods and properties an
+    input specification must have.
+    """
+    @property
+    @abstractmethod
+    def widget(self):
+        pass
+
+    @property
+    @abstractmethod
+    def function_arguments(self):
+        pass
+
+
+class InputSpecComboboxBase(IInputSpec):
     """
     Controls creation and validaton of user-input widgets.
     """
-    def __init__(self, name, options=(), tooltip='', scope={}):
+    def __init__(self,
+                 function_arg_name: str,
+                 options: Sequence[str] = (),
+                 tooltip: str = '',
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        name (str): Name of function argument this input corresponds to.
-        validator (Callable[[str], Any]): Validator function.
+        function_arg_name (str): Name of function argument this input
+        corresponds to.
         options (List[str]): List of dropdown options.
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        self._name = name
+        self._name = function_arg_name
         self._options = options
-        self._tooltip = tooltip if tooltip else name
+        self._tooltip = tooltip if tooltip else function_arg_name
         self._validator = lambda input: input
-
-    def create_input_widget(self):
-        """
-        Creates and returns the relevant user-input ipywidget.
-        """
-        return widgets.Combobox(placeholder=self._tooltip,
-                                continuous_update=False,
-                                options=self._options)
-
-    def validate(self, input):
-        """
-        Validates the user input. Throws if invalid,
-        otherwise returns the input with pre-processing
-        applied if applicable
-        """
-        return self._validator(input)
+        self._widget = widgets.Combobox(placeholder=self._tooltip,
+                                        continuous_update=False,
+                                        options=self._options)
 
     @property
-    def name(self):
+    def function_arguments(self) -> Dict[str, Any]:
         """
-        Property holding name of function argument this input corresponds to.
+        Return function arguments as dict of arg_name: arg_value
         """
-        return self._name
+        return {self._name: self._validator(self.widget.value)}
+
+    @property
+    def widget(self):
+        """
+        Returns constructed used-input widget
+        """
+        return self._widget
 
 
 class StringInputSpec(InputSpecComboboxBase):
@@ -53,20 +79,21 @@ class StringInputSpec(InputSpecComboboxBase):
     Processed raw string as input.
     """
     def __init__(self,
-                 name,
-                 validator=lambda input: input,
-                 options=(),
-                 tooltip='',
-                 scope={}):
+                 function_arg_name: str,
+                 validator: Callable[[str], str] = lambda input: input,
+                 options: Sequence[str] = (),
+                 tooltip: str = '',
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        name (str): Name of function argument this input corresponds to.
+        function_arg_name (str): Name of function argument this
+        input corresponds to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(name, options, tooltip, scope)
+        super().__init__(function_arg_name, options, tooltip, scope)
         self._validator = validator
 
 
@@ -76,22 +103,82 @@ class InputSpec(InputSpecComboboxBase):
     Evaluates input string in scope
     """
     def __init__(self,
-                 name,
-                 validator=lambda input: input,
-                 options=(),
-                 tooltip='',
-                 scope={}):
+                 function_arg_name: str,
+                 validator: Callable[[Any], Any] = lambda input: input,
+                 options: Sequence[str] = (),
+                 tooltip: str = '',
+                 scope: MutableMapping[str, Any] = {}):
         """
         Parameters:
-        name (str): Name of function argument this input corresponds to.
+        function_arg_name (str): Name of function argument
+        this input maps to.
         validator (Callable[[str], Any]): Validator function.
         options (List[str]): List of dropdown options.
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(name, options, tooltip, scope)
+        super().__init__(function_arg_name, options, tooltip, scope)
         scope = scope if scope else get_notebook_global_scope()
-        self._validator = lambda input: validator(eval(input, scope))
+        self._validator = lambda input: validator(_wrapped_eval(input, scope))
+
+
+class ScippInputWithDimSpec(IInputSpec):
+    """
+    Input widget which takes a scipp object and a linked
+    dimension field.
+    """
+    def __init__(self,
+                 func_arg_names: Sequence[str],
+                 data_name: str = 'data',
+                 scope: MutableMapping[str, Any] = {}):
+        self._scope = scope if scope else get_notebook_global_scope()
+        self._func_arg_names = func_arg_names
+        self._scipp_obj_input = widgets.Text(placeholder=data_name,
+                                             continuous_update=False)
+        self._dimension_input = widgets.Combobox(placeholder='dim',
+                                                 continuous_update=False)
+        self._scipp_obj_input.observe(self._handle_scipp_obj_change,
+                                      names='value')
+        self._widget = widgets.HBox(
+            [self._scipp_obj_input, self._dimension_input])
+        self._validators = (self._scipp_obj_validator, self._dims_validator)
+        self._allowed_dims = []
+
+    @property
+    def function_arguments(self):
+        return {
+            name: validator(widget.value)
+            for name, widget, validator in zip(
+                self._func_arg_names, self.widget.children, self._validators)
+        }
+
+    @property
+    def widget(self):
+        return self._widget
+
+    def _handle_scipp_obj_change(self, change):
+        try:
+            scipp_obj = self._scipp_obj_validator(change['new'])
+            dims = scipp_obj.dims
+            self._dimension_input.options = dims
+            self._allowed_dims = dims
+        except ValueError:
+            pass
+
+    def _scipp_obj_validator(self, input):
+        scipp_object = _wrapped_eval(input, self._scope)
+        scipp_object_validator(scipp_object)
+        has_attr_validator(scipp_object, 'dims')
+        return scipp_object
+
+    def _dims_validator(self, input):
+        if not input:
+            raise ValueError('No dimension selected')
+        if input in self._allowed_dims:
+            return input
+        else:
+            raise ValueError(f'Dimension {input} does no exist in'
+                             f' {self._scipp_obj_input.value}')
 
 
 def get_notebook_global_scope():
