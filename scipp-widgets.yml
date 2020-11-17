@@ -6,6 +6,6 @@ channels:
 
 dependencies:
   - pytest
-  - ipywidgets
+  - ipywidgets=7.5.1
   - yapf
   - scipp
