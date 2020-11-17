@@ -48,6 +48,14 @@ autosummary_generate = True
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
+html_show_sourcelink = True
+html_sourcelink_suffix = ''
+nbsphinx_prolog = """`Download this Jupyter notebook <https://raw.githubusercontent.com/scipp/scipp-widgets/master/docs/{{ env.doc2path(env.docname, base=None) }}>`_"""
+
+# autodocs includes everything, even irrelevant API internals. autosummary
+# looks more suitable in the long run when the API grows.
+# For a nice example see how xarray handles its API documentation.
+autosummary_generate = True
 
 # The master toctree document.
 master_doc = 'index'
@@ -57,12 +65,15 @@ master_doc = 'index'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
+# The name of the Pygments (syntax highlighting) style to use.
+pygments_style = 'sphinx'
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-
+# Add any paths that contain templates here, relative to this directory.
+templates_path = ['_templates']
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
@@ -97,3 +108,17 @@ html_static_path = ['_static']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/3/': None}
+
+nbsphinx_execute_arguments = [
+    "--InlineBackend.figure_formats={'svg', 'pdf'}",
+    "--InlineBackend.rc={'figure.dpi': 96}",
+    "--Session.metadata={'scipp_docs_build': True}",
+]
+
+html_sidebars = {
+    '**': [
+        'globaltoc.html',
+        'relations.html',  # needs 'show_related': True theme option to display
+        'searchbox.html',
+    ]
+}
