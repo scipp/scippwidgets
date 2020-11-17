@@ -50,7 +50,10 @@ autosummary_generate = True
 source_suffix = '.rst'
 html_show_sourcelink = True
 html_sourcelink_suffix = ''
-nbsphinx_prolog = """`Download this Jupyter notebook <https://raw.githubusercontent.com/scipp/scipp-widgets/master/docs/{{ env.doc2path(env.docname, base=None) }}>`_"""
+nbsphinx_prolog = (
+    "`Download this Jupyter notebook "
+    "<https://raw.githubusercontent.com/scipp/scipp/master/docs/"
+    "{{ env.doc2path(env.docname, base=None) }}>`_")
 
 # autodocs includes everything, even irrelevant API internals. autosummary
 # looks more suitable in the long run when the API grows.
