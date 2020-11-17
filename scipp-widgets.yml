@@ -9,3 +9,7 @@ dependencies:
   - ipywidgets
   - yapf
   - scipp
+  - sphinx>=1.6
+  - sphinx_rtd_theme
+  - nbsphinx
+  - ipympl

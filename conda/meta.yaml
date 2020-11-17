@@ -6,18 +6,24 @@ source:
   path: ..
 
 requirements:
+  build:
+    - python {{ python }}
   run:
     - python {{ python }}
     - scipp
     - ipywidgets
+    - matplotlib
 
 test:
   import:
     - scipp_widgets
+    - scipp_widgets.input_spec
+    - scipp_widgets.validators
+    - scipp_widgets.widgets
   requires:
     - pytest
   source_files:
-    - .
+    - tests
   commands:
     - python -m pytest -v
 
