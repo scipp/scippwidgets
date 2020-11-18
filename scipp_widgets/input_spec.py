@@ -9,8 +9,6 @@ from abc import ABC, abstractmethod
 
 
 def _wrapped_eval(input, scope):
-    if not input:
-        raise ValueError('Mandatory input field is empty.')
     try:
         return eval(input, scope)
     except NameError:
@@ -63,7 +61,10 @@ class InputSpecComboboxBase(IInputSpec):
         """
         Return function arguments as dict of arg_name: arg_value
         """
-        return {self._name: self._validator(self.widget.value)}
+        if self.widget.value:
+            return {self._name: self._validator(self.widget.value)}
+        else:
+            return {}
 
     @property
     def widget(self):
@@ -150,6 +151,7 @@ class ScippInputWithDimSpec(IInputSpec):
             name: validator(widget.value)
             for name, widget, validator in zip(
                 self._func_arg_names, self.widget.children, self._validators)
+            if widget.value
         }
 
     @property
