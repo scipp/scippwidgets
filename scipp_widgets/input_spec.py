@@ -25,11 +25,17 @@ class IInputSpec(ABC):
     @property
     @abstractmethod
     def widget(self):
+        """
+        Returns a constructed widget to insert into the graphical interface.
+        """
         pass
 
     @property
     @abstractmethod
     def function_arguments(self):
+        """
+        Returns a dict made up of func_arg_name: func_arg_value
+        """
         pass
 
 
