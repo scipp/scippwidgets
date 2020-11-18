@@ -8,6 +8,7 @@ from scipp_widgets.input_spec import (InputSpec, StringInputSpec,
 import scipp as sc
 import numpy as np
 import pytest
+import ipywidgets
 
 
 def test_InputSpec_creates_widget_with_correct_properties():
@@ -70,6 +71,7 @@ def test_ScippInputWithDimSpec_throws_for_invalid_dimension():
                                        'input-data',
                                        scope=scope)
 
+    print(ipywidgets.__version__)
     input_spec.widget.children[0].value = 'scipp_obj'
     input_spec.widget.children[1].value = 'invalid'
 

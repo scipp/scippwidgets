@@ -1,0 +1,1 @@
+mv scipp_widgets "$CONDA_PREFIX"/lib/python*/
