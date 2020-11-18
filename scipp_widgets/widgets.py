@@ -116,7 +116,8 @@ class WidgetBase(widgets.Box):
 
 class DisplayWidget(WidgetBase):
     """
-    Provides a simple graphical wrapper around a given callable.
+    Provides a simple graphical wrapper around a given callable,
+    displaying the return value.
     """
     def __init__(self,
                  wrapped_func: Callable,
@@ -138,7 +139,8 @@ class DisplayWidget(WidgetBase):
 
 class ProcessWidget(WidgetBase):
     """
-    Provides a simple graphical wrapper around a given callable.
+    Provides a simple graphical wrapper around a given callable,
+    adding the return value to the notebooks scope.
     """
     def __init__(self,
                  wrapped_func: Callable,

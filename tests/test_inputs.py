@@ -49,18 +49,18 @@ def _create_scipp_obj():
         })
 
 
-# def test_ScippInputWithDimSpec_returns_correct_function_args():
-#     scipp_obj = _create_scipp_obj()
-#     function_args = ['arg1', 'arg2']
-#     scope = {'scipp_obj': scipp_obj}
-#     input_spec = ScippInputWithDimSpec(function_args,
-#                                        'input-data',
-#                                        scope=scope)
+def test_ScippInputWithDimSpec_returns_correct_function_args():
+    scipp_obj = _create_scipp_obj()
+    function_args = ['arg1', 'arg2']
+    scope = {'scipp_obj': scipp_obj}
+    input_spec = ScippInputWithDimSpec(function_args,
+                                       'input-data',
+                                       scope=scope)
 
-#     input_spec.widget.children[0].value = 'scipp_obj'
-#     input_spec.widget.children[1].value = 'y'
+    input_spec.widget.children[0].value = 'scipp_obj'
+    input_spec.widget.children[1].value = 'y'
 
-#     assert input_spec.function_arguments == {'arg1': scipp_obj, 'arg2': 'y'}
+    assert input_spec.function_arguments == {'arg1': scipp_obj, 'arg2': 'y'}
 
 
 def test_ScippInputWithDimSpec_throws_for_invalid_dimension():

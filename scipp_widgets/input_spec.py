@@ -81,8 +81,8 @@ class InputSpecComboboxBase(IInputSpec):
 
 class TextInputSpec(InputSpecComboboxBase):
     """
-    Controls creation and validaton of user-input widgets.
-    Processed raw string as input.
+    Controls creation and validaton of user-input widgets
+    for string values.
     """
     def __init__(self,
                  function_arg_name: str,
@@ -105,8 +105,8 @@ class TextInputSpec(InputSpecComboboxBase):
 
 class InputSpec(InputSpecComboboxBase):
     """
-    Controls creation and validaton of user-input widgets.
-    Evaluates input string in scope
+    Controls creation and validaton of user-input widgets,
+    evaluates input string in scope
     """
     def __init__(self,
                  function_arg_name: str,
