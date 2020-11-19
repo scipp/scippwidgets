@@ -31,30 +31,15 @@ class IInputSpec(ABC):
         pass
 
 
-class InputSpecComboboxBase(IInputSpec):
-    """
-    Controls creation and validaton of user-input widgets.
-    """
+class InputSpecWidgetWrapper(IInputSpec):
     def __init__(self,
-                 function_arg_name: str,
-                 options: Sequence[str] = (),
-                 tooltip: str = '',
-                 scope: MutableMapping[str, Any] = {}):
-        """
-        Parameters:
-        function_arg_name (str): Name of function argument this input
-        corresponds to.
-        options (List[str]): List of dropdown options.
-        tooltip (str): Widget placeholder text.
-        scope (Dict[str: Any]): Non default scope to use for evaluation.
-        """
-        self._name = function_arg_name
-        self._options = options
-        self._tooltip = tooltip if tooltip else function_arg_name
-        self._validator = lambda input: input
-        self._widget = widgets.Combobox(placeholder=self._tooltip,
-                                        continuous_update=False,
-                                        options=self._options)
+                 func_arg_name,
+                 widget=widgets.Combobox,
+                 validator=lambda input: input,
+                 **kwargs):
+        self._name = func_arg_name
+        self._widget = widget(**kwargs)
+        self._validator = validator
 
     @property
     def function_arguments(self) -> Dict[str, Any]:
@@ -74,7 +59,7 @@ class InputSpecComboboxBase(IInputSpec):
         return self._widget
 
 
-class StringInputSpec(InputSpecComboboxBase):
+class StringInputSpec(InputSpecWidgetWrapper):
     """
     Controls creation and validaton of user-input widgets.
     Processed raw string as input.
@@ -82,9 +67,7 @@ class StringInputSpec(InputSpecComboboxBase):
     def __init__(self,
                  function_arg_name: str,
                  validator: Callable[[str], str] = lambda input: input,
-                 options: Sequence[str] = (),
-                 tooltip: str = '',
-                 scope: MutableMapping[str, Any] = {}):
+                 **kwargs):
         """
         Parameters:
         function_arg_name (str): Name of function argument this
@@ -94,11 +77,13 @@ class StringInputSpec(InputSpecComboboxBase):
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(function_arg_name, options, tooltip, scope)
-        self._validator = validator
+        super().__init__(function_arg_name,
+                         widget=widgets.Combobox,
+                         validator=validator,
+                         **kwargs)
 
 
-class InputSpec(InputSpecComboboxBase):
+class InputSpec(InputSpecWidgetWrapper):
     """
     Controls creation and validaton of user-input widgets.
     Evaluates input string in scope
@@ -106,9 +91,8 @@ class InputSpec(InputSpecComboboxBase):
     def __init__(self,
                  function_arg_name: str,
                  validator: Callable[[Any], Any] = lambda input: input,
-                 options: Sequence[str] = (),
-                 tooltip: str = '',
-                 scope: MutableMapping[str, Any] = {}):
+                 scope: MutableMapping[str, Any] = {},
+                 **kwargs):
         """
         Parameters:
         function_arg_name (str): Name of function argument
@@ -118,7 +102,10 @@ class InputSpec(InputSpecComboboxBase):
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(function_arg_name, options, tooltip, scope)
+        super().__init__(function_arg_name,
+                         widget=widgets.Combobox,
+                         validator=validator,
+                         **kwargs)
         scope = scope if scope else get_notebook_global_scope()
         self._validator = lambda input: validator(_wrapped_eval(input, scope))
 
