@@ -4,7 +4,11 @@
 # @author Matthew Andrew
 
 from scipp_widgets.widgets import (DisplayWidget, ProcessWidget)
+<<<<<<< HEAD
 from scipp_widgets.input_spec import TextInputSpec
+=======
+from scipp_widgets.input import StringInput
+>>>>>>> multi_input_widgets
 import pytest
 
 
@@ -53,9 +57,9 @@ def test_function_with_args_and_kwargs():
         return f'{p_or_k} {k_only} {kwargs}'
 
     scope = {'test': 'one'}
-    input_1 = TextInputSpec('p_or_k')
-    input_2 = TextInputSpec('k_only')
-    input_3 = TextInputSpec('var_keyword')
+    input_1 = TextInput('p_or_k')
+    input_2 = TextInput('k_only')
+    input_3 = TextInput('var_keyword')
     widget = ProcessWidget(test_func, [input_1, input_2, input_3], scope=scope)
     widget.output.value = 'obj_name'
     input_1.widget.value = 'input_1'
@@ -72,8 +76,8 @@ def test_default_func_args_used_if_they_exist():
         return f'{arg1} {arg2}'
 
     scope = {'test': 'one'}
-    input_1 = TextInputSpec('arg1')
-    input_2 = TextInputSpec('arg2')
+    input_1 = TextInput('arg1')
+    input_2 = TextInput('arg2')
     widget = ProcessWidget(test_func, [input_1, input_2], scope=scope)
     widget.output.value = 'obj_name'
     input_1.widget.value = 'input_1'

@@ -15,7 +15,7 @@ def _wrapped_eval(input, scope):
         raise ValueError(f"Object of name '{input}' not found in scope.")
 
 
-class IInputSpec(ABC):
+class IInput(ABC):
     """
     Interfaces detailing which methods and properties an
     input specification must have.
@@ -23,21 +23,15 @@ class IInputSpec(ABC):
     @property
     @abstractmethod
     def widget(self):
-        """
-        Returns a constructed widget to insert into the graphical interface.
-        """
         pass
 
     @property
     @abstractmethod
     def function_arguments(self):
-        """
-        Returns a dict made up of func_arg_name: func_arg_value
-        """
         pass
 
 
-class InputSpecSingleInput(IInputSpec):
+class SingleInput(IInput):
     def __init__(self,
                  func_arg_name,
                  widget_type=widgets.Combobox,
@@ -65,10 +59,10 @@ class InputSpecSingleInput(IInputSpec):
         return self._widget
 
 
-class TextInputSpec(InputSpecSingleInput):
+class TextInput(SingleInput):
     """
-    Controls creation and validaton of user-input widgets
-    for string values.
+    Controls creation and validaton of user-input widgets.
+    Processed raw string as input.
     """
     def __init__(self,
                  function_arg_name: str,
@@ -88,10 +82,10 @@ class TextInputSpec(InputSpecSingleInput):
         self._validator = validator
 
 
-class InputSpec(InputSpecSingleInput):
+class Input(SingleInput):
     """
-    Controls creation and validaton of user-input widgets,
-    evaluates input string in scope
+    Controls creation and validaton of user-input widgets.
+    Evaluates input string in scope
     """
     def __init__(self,
                  function_arg_name: str,
@@ -113,7 +107,7 @@ class InputSpec(InputSpecSingleInput):
         self._validator = lambda input: validator(_wrapped_eval(input, scope))
 
 
-class ScippInputWithDimSpec(IInputSpec):
+class ScippInputWithDim(IInput):
     """
     Input widget which takes a scipp object and a linked
     dimension field.

@@ -3,35 +3,34 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.input_spec import (InputSpec, TextInputSpec,
-                                      ScippInputWithDimSpec)
+from scipp_widgets.input import (Input, StringInput, ScippInputWithDim)
 import scipp as sc
 import numpy as np
 import pytest
 import ipywidgets
 
 
-def test_InputSpec_creates_widget_with_correct_properties():
+def test_Input_creates_widget_with_correct_properties():
     name = 'test_input'
     options = ('x', 'y', 'z')
     tooltip = 'input here'
-    input_spec = TextInputSpec(function_arg_name=name,
-                               options=options,
-                               placeholder=tooltip)
+    input_spec = TextInput(function_arg_name=name,
+                           options=options,
+                           placeholder=tooltip)
     input_spec.widget.value = 'user input'
 
-    assert input_spec.widget.options == options
-    assert input_spec.widget.placeholder == tooltip
-    assert input_spec.function_arguments == {'test_input': 'user input'}
+    assert input.widget.options == options
+    assert input.widget.placeholder == tooltip
+    assert input.function_arguments == {'test_input': 'user input'}
 
 
-def test_InputSpec_evaluates_expression_in_scope():
+def test_Input_evaluates_expression_in_scope():
     name = 'test_input'
     scope = {'test_obj': [1, 2, 3, 45]}
-    input_spec = InputSpec(function_arg_name=name, scope=scope)
-    input_spec.widget.value = 'test_obj'
+    input = Input(function_arg_name=name, scope=scope)
+    input.widget.value = 'test_obj'
 
-    assert input_spec.function_arguments == {'test_input': [1, 2, 3, 45]}
+    assert input.function_arguments == {'test_input': [1, 2, 3, 45]}
 
 
 def _create_scipp_obj():
@@ -49,47 +48,41 @@ def _create_scipp_obj():
         })
 
 
-def test_ScippInputWithDimSpec_returns_correct_function_args():
+def test_ScippInputWithDim_returns_correct_function_args():
     scipp_obj = _create_scipp_obj()
     function_args = ['arg1', 'arg2']
     scope = {'scipp_obj': scipp_obj}
-    input_spec = ScippInputWithDimSpec(function_args,
-                                       'input-data',
-                                       scope=scope)
+    input = ScippInputWithDim(function_args, 'input-data', scope=scope)
 
-    input_spec.widget.children[0].value = 'scipp_obj'
-    input_spec.widget.children[1].value = 'y'
+    input.widget.children[0].value = 'scipp_obj'
+    input.widget.children[1].value = 'y'
 
-    assert input_spec.function_arguments == {'arg1': scipp_obj, 'arg2': 'y'}
+    assert input.function_arguments == {'arg1': scipp_obj, 'arg2': 'y'}
 
 
-def test_ScippInputWithDimSpec_throws_for_invalid_dimension():
+def test_ScippInputWithDim_throws_for_invalid_dimension():
     scipp_obj = _create_scipp_obj()
     function_args = ['arg1', 'arg2']
     scope = {'scipp_obj': scipp_obj}
-    input_spec = ScippInputWithDimSpec(function_args,
-                                       'input-data',
-                                       scope=scope)
+    input = ScippInputWithDim(function_args, 'input-data', scope=scope)
 
     print(ipywidgets.__version__)
-    input_spec.widget.children[0].value = 'scipp_obj'
-    input_spec.widget.children[1].value = 'invalid'
+    input.widget.children[0].value = 'scipp_obj'
+    input.widget.children[1].value = 'invalid'
 
     with pytest.raises(ValueError) as exp:
-        input_spec.function_arguments
+        input.function_arguments
 
     assert str(exp.value) == 'Dimension invalid does no exist in scipp_obj'
 
 
-def test_ScippInputWithDimSpec_throws_for_non_scipp_object():
+def test_ScippInputWithDim_throws_for_non_scipp_object():
     scipp_obj = [1, 2, 3, 4, 5]
     function_args = ['arg1', 'arg2']
     scope = {'scipp_obj': scipp_obj}
-    input_spec = ScippInputWithDimSpec(function_args,
-                                       'input-data',
-                                       scope=scope)
+    input = ScippInputWithDim(function_args, 'input-data', scope=scope)
 
-    input_spec.widget.children[0].value = 'scipp_obj'
+    input.widget.children[0].value = 'scipp_obj'
 
     with pytest.raises(ValueError):
-        input_spec.function_arguments
+        input.function_arguments

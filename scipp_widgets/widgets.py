@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .input_spec import get_notebook_global_scope, IInputSpec
+from .input import get_notebook_global_scope, IInput
 from IPython.core.display import display, Javascript
 from typing import Any, MutableMapping, Callable, Iterable
 
@@ -53,22 +53,22 @@ class WidgetBase(widgets.Box):
     """
     def __init__(self,
                  wrapped_func: Callable,
-                 input_specs: Iterable[IInputSpec],
+                 inputs: Iterable[IInput],
                  button_name: str = '',
                  hide_code: bool = False):
         """
         Parameters:
         wrapped_func (Callable): The function to call
-        input_specs (list): class containing input data
+        inputs (list): class containing input data
         name (str): name of widget to display
         hide_code (bool): hide the code block containing this class
         """
         super().__init__()
         self.layout.flex_flow = 'column'
         self.callable = wrapped_func
-        self.input_specs = input_specs
+        self.inputs = inputs
         self.input_widgets = []
-        self._setup_input_widgets(input_specs)
+        self._setup_input_widgets(inputs)
 
         button_name = button_name if button_name else wrapped_func.__name__
         self.button = widgets.Button(description=button_name)
@@ -95,7 +95,7 @@ class WidgetBase(widgets.Box):
 
     def _retrieve_kwargs(self):
         kwargs = {}
-        for input in self.input_specs:
+        for input in self.inputs:
             kwargs.update(input.function_arguments)
 
         # Remove entries with an empty string value
@@ -126,17 +126,17 @@ class DisplayWidget(WidgetBase):
     """
     def __init__(self,
                  wrapped_func: Callable,
-                 input_specs: Iterable[IInputSpec],
+                 inputs: Iterable[IInput],
                  button_name: str = '',
                  hide_code=False):
         """
         Parameters:
         wrapped_func (Callable): The function to call
-        input_specs (list): class containing input data
+        inputs (list): class containing input data
         name (str): name of widget to display
         hide_code (bool): hide the code block containing this class
         """
-        super().__init__(wrapped_func, input_specs, button_name, hide_code)
+        super().__init__(wrapped_func, inputs, button_name, hide_code)
 
     def _process(self, kwargs):
         display(self.callable(**kwargs))
@@ -149,7 +149,7 @@ class ProcessWidget(WidgetBase):
     """
     def __init__(self,
                  wrapped_func: Callable,
-                 input_specs: Iterable[IInputSpec],
+                 inputs: Iterable[IInput],
                  button_name: str = '',
                  hide_code: bool = False,
                  scope: MutableMapping[str, Any] = {}):
@@ -161,7 +161,7 @@ class ProcessWidget(WidgetBase):
         hide_code (bool): hide the code block containing this class
         """
         super().__init__(wrapped_func,
-                         input_specs,
+                         inputs,
                          button_name,
                          hide_code=hide_code)
         self.scope = scope if scope else get_notebook_global_scope()
