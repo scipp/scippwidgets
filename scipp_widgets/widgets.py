@@ -29,7 +29,7 @@ def toggle_code(state, output_widget=None):
 
 class HideCodeWidget(widgets.Box):
     """
-    Button which toggles the visibilty of code block.
+    Toggles the visibilty of the code block.
     """
     def __init__(self, state):
         super().__init__()

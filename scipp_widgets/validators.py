@@ -13,16 +13,22 @@ scipp_object = scipp_object_mutable + (
 
 
 class Validator():
-    def __init__(self, boolean_expression):
-        self.boolean_expression = boolean_expression
+    """
+    Creates a validator callable from a predicate.
+    """
+    def __init__(self, predicate):
+        self.predicate = predicate
 
     def __call__(self, input):
-        if not self.boolean_expression(input):
+        if not self.predicate(input):
             raise ValueError(f'{input} is invalid')
         return input
 
 
 class TypeValidator():
+    """
+    Creates a validator callable from tuple of allowed types.
+    """
     def __init__(self, allowed_types):
         self.allowed_types = allowed_types
 
@@ -35,6 +41,9 @@ class TypeValidator():
 
 
 class ValueValidator():
+    """
+    Creates a validator callable from tuple of allowed values.
+    """
     def __init__(self, allowed_values):
         self.allowed_values = allowed_values
 
@@ -49,12 +58,18 @@ scipp_object_validator = TypeValidator(scipp_object)
 
 
 def has_attr_validator(input, attr):
+    """
+    Checks whether an input has a specified attribute.
+    """
     if hasattr(input, attr):
         return input
     raise ValueError(f'{input} does not have require attribute {attr}')
 
 
 class FilepathValidator():
+    """
+    Checks whether a given file exists in the specified directory.
+    """
     def __init__(self, data_directory=pathlib.Path.cwd()):
         self.data_directory = data_directory
 
