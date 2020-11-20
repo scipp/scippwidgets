@@ -7,7 +7,6 @@ import ipywidgets as widgets
 from .input_spec import get_notebook_global_scope, IInputSpec
 from IPython.core.display import display, Javascript
 from typing import Any, MutableMapping, Callable, Iterable
-from inspect import signature
 
 javascript_functions = {False: "hide()", True: "show()"}
 

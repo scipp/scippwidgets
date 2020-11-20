@@ -46,7 +46,8 @@ def test_function_with_args_and_kwargs():
     """
     Checking that different the different parameter types available
     in python work. Note currently does not support POSITIONAL_ONLY or *arg
-    params. See https://docs.python.org/3/library/inspect.html#inspect.Parameter
+    params.
+    See https://docs.python.org/3/library/inspect.html#inspect.Parameter
     """
     def test_func(p_or_k='io', k_only='k_only', **kwargs):
         return f'{p_or_k} {k_only} {kwargs}'

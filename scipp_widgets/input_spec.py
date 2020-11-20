@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 import ipywidgets as widgets
 from scipp_widgets.validators import scipp_object_validator, has_attr_validator
-from typing import Any, Sequence, MutableMapping, Dict, Callable
+from typing import Any, Sequence, MutableMapping, Callable
 from abc import ABC, abstractmethod
 
 
@@ -31,18 +31,18 @@ class IInputSpec(ABC):
         pass
 
 
-class InputSpecWidgetWrapper(IInputSpec):
+class InputSpecSingleInput(IInputSpec):
     def __init__(self,
                  func_arg_name,
-                 widget=widgets.Combobox,
+                 widget_type=widgets.Combobox,
                  validator=lambda input: input,
                  **kwargs):
         self._name = func_arg_name
-        self._widget = widget(**kwargs)
+        self._widget = widget_type(**kwargs)
         self._validator = validator
 
     @property
-    def function_arguments(self) -> Dict[str, Any]:
+    def function_arguments(self):
         """
         Return function arguments as dict of arg_name: arg_value
         """
@@ -59,7 +59,7 @@ class InputSpecWidgetWrapper(IInputSpec):
         return self._widget
 
 
-class StringInputSpec(InputSpecWidgetWrapper):
+class StringInputSpec(InputSpecSingleInput):
     """
     Controls creation and validaton of user-input widgets.
     Processed raw string as input.
@@ -77,13 +77,12 @@ class StringInputSpec(InputSpecWidgetWrapper):
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(function_arg_name,
-                         widget=widgets.Combobox,
-                         validator=validator,
-                         **kwargs)
+        self._name = function_arg_name
+        self._widget = widgets.Combobox(**kwargs)
+        self._validator = validator
 
 
-class InputSpec(InputSpecWidgetWrapper):
+class InputSpec(InputSpecSingleInput):
     """
     Controls creation and validaton of user-input widgets.
     Evaluates input string in scope
@@ -102,10 +101,8 @@ class InputSpec(InputSpecWidgetWrapper):
         tooltip (str): Widget placeholder text.
         scope (Dict[str: Any]): Non default scope to use for evaluation.
         """
-        super().__init__(function_arg_name,
-                         widget=widgets.Combobox,
-                         validator=validator,
-                         **kwargs)
+        self._name = function_arg_name
+        self._widget = widgets.Combobox(**kwargs)
         scope = scope if scope else get_notebook_global_scope()
         self._validator = lambda input: validator(_wrapped_eval(input, scope))
 
