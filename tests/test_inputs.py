@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.input_spec import (InputSpec, StringInputSpec,
+from scipp_widgets.input_spec import (InputSpec, TextInputSpec,
                                       ScippInputWithDimSpec)
 import scipp as sc
 import numpy as np
@@ -15,9 +15,9 @@ def test_InputSpec_creates_widget_with_correct_properties():
     name = 'test_input'
     options = ('x', 'y', 'z')
     tooltip = 'input here'
-    input_spec = StringInputSpec(function_arg_name=name,
-                                 options=options,
-                                 placeholder=tooltip)
+    input_spec = TextInputSpec(function_arg_name=name,
+                               options=options,
+                               placeholder=tooltip)
     input_spec.widget.value = 'user input'
 
     assert input_spec.widget.options == options
