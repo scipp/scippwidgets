@@ -97,6 +97,11 @@ class WidgetBase(widgets.Box):
         kwargs = {}
         for input in self.input_specs:
             kwargs.update(input.function_arguments)
+
+        # Remove entries with an empty string value
+        # to allow default parameter values to kick
+        # in if possible.
+        {key: item for key, item in kwargs.items() if item != ''}
         return kwargs
 
     def _on_button_clicked(self, button):
@@ -178,6 +183,6 @@ class ProcessWidget(WidgetBase):
         else:
             print('Invalid inputs: No output name specified')
             return
-
-        self.scope[output_name] = self.callable(**kwargs)
+        output = self.callable(**kwargs)
+        self.scope[output_name] = output
         display(self.scope[output_name])

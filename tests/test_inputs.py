@@ -17,7 +17,7 @@ def test_InputSpec_creates_widget_with_correct_properties():
     tooltip = 'input here'
     input_spec = StringInputSpec(function_arg_name=name,
                                  options=options,
-                                 tooltip=tooltip)
+                                 placeholder=tooltip)
     input_spec.widget.value = 'user input'
 
     assert input_spec.widget.options == options
