@@ -86,7 +86,7 @@ class TextInput(SingleInput):
             self._widget.placeholder = function_arg_name
 
 
-class EvalInput(SingleInput):
+class Input(SingleInput):
     """
     Controls creation and validaton of user-input widgets.
     Evaluates input string in scope

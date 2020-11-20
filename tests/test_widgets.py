@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 
 from scipp_widgets.widgets import (DisplayWidget, ProcessWidget)
-from scipp_widgets.input import TextInput
+from scipp_widgets.inputs import TextInput
 import pytest
 
 

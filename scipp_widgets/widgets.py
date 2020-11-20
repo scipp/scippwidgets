@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .inputs import get_notebook_global_scope, IInput, EvalInput
+from .inputs import get_notebook_global_scope, IInput, Input
 from IPython.core.display import display, Javascript
 from typing import Any, MutableMapping, Callable, Iterable
 import scipp as sc
@@ -145,7 +145,7 @@ class DisplayWidget(WidgetBase):
 
 def PlotWidget(hide_code=False):
     return DisplayWidget(wrapped_func=sc.plot.plot,
-                         inputs=(EvalInput('scipp_obj'), ),
+                         inputs=(Input('scipp_obj'), ),
                          button_name='plot',
                          hide_code=hide_code)
 
