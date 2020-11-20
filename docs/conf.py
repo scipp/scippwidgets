@@ -115,9 +115,9 @@ html_static_path = ['_static']
 intersphinx_mapping = {'scipp': ('https://scipp.github.io/', None)}
 
 nbsphinx_execute_arguments = [
-    "--InlineBackend.figure_formats={'svg', 'pdf'}",
+    "--InlineBackend.figure_formats 'svg'='pdf'",
     "--InlineBackend.rc 'figure.dpi'=96",
-    "--Session.metadata={'scipp_docs_build': True}",
+    "--Session.metadata 'scipp_docs_build'=True",
 ]
 
 html_sidebars = {
