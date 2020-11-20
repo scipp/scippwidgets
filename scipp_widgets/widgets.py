@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .input import get_notebook_global_scope, IInput
+from .inputs import get_notebook_global_scope, IInput
 from IPython.core.display import display, Javascript
 from typing import Any, MutableMapping, Callable, Iterable
 

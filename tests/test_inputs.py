@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.input import (Input, StringInput, ScippInputWithDim)
+from scipp_widgets.inputs import (EvalInput, StringInput, ScippInputWithDim)
 import scipp as sc
 import numpy as np
 import pytest
@@ -27,7 +27,7 @@ def test_Input_creates_widget_with_correct_properties():
 def test_Input_evaluates_expression_in_scope():
     name = 'test_input'
     scope = {'test_obj': [1, 2, 3, 45]}
-    input = Input(function_arg_name=name, scope=scope)
+    input = EvalInput(function_arg_name=name, scope=scope)
     input.widget.value = 'test_obj'
 
     assert input.function_arguments == {'test_input': [1, 2, 3, 45]}
