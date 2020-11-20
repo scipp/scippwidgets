@@ -17,7 +17,7 @@ requirements:
 test:
   import:
     - scipp_widgets
-    - scipp_widgets.input
+    - scipp_widgets.inputs
     - scipp_widgets.validators
     - scipp_widgets.widgets
   requires:
