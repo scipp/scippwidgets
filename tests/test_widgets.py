@@ -4,11 +4,7 @@
 # @author Matthew Andrew
 
 from scipp_widgets.widgets import (DisplayWidget, ProcessWidget)
-<<<<<<< HEAD
-from scipp_widgets.input_spec import TextInputSpec
-=======
-from scipp_widgets.input import StringInput
->>>>>>> multi_input_widgets
+from scipp_widgets.input import TextInput
 import pytest
 
 

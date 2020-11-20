@@ -15,15 +15,15 @@ Source code can be found at https://github.com/scipp/scipp-widgets
    scipp_widgets_intro
 
 .. toctree::
+   :maxdepth: 3
+   :caption: Contents
+
+   widgets
+   inputs
+   validators
+
+.. toctree::
    :maxdepth: 2
    :caption: Design
 
    concepts
-
-.. toctree::
-   :maxdepth: 3
-   :caption: Reference
-
-   widgets
-   input_spec
-   validators

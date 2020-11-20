@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.input import (Input, StringInput, ScippInputWithDim)
+from scipp_widgets.input import (Input, TextInput, ScippInputWithDim)
 import scipp as sc
 import numpy as np
 import pytest
@@ -14,10 +14,10 @@ def test_Input_creates_widget_with_correct_properties():
     name = 'test_input'
     options = ('x', 'y', 'z')
     tooltip = 'input here'
-    input_spec = TextInput(function_arg_name=name,
-                           options=options,
-                           placeholder=tooltip)
-    input_spec.widget.value = 'user input'
+    input = TextInput(function_arg_name=name,
+                      options=options,
+                      placeholder=tooltip)
+    input.widget.value = 'user input'
 
     assert input.widget.options == options
     assert input.widget.placeholder == tooltip

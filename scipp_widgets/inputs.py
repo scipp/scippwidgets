@@ -82,7 +82,7 @@ class TextInput(SingleInput):
         self._validator = validator
 
 
-class Input(SingleInput):
+class EvalInput(SingleInput):
     """
     Controls creation and validaton of user-input widgets.
     Evaluates input string in scope
