@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 import ipywidgets as widgets
-from scipp_widgets.validators import scipp_object_validator, has_attr_validator
+from scipp_widgets.validators import ScippObjectValidator, AttrValidator
 from typing import Any, Sequence, MutableMapping, Callable
 from abc import ABC, abstractmethod
 
@@ -40,6 +40,8 @@ class SingleInput(IInput):
         self._name = func_arg_name
         self._widget = widget_type(**kwargs)
         self._validator = validator
+        if 'placeholder' not in kwargs:
+            self._widget.placeholder = func_arg_name
 
     @property
     def function_arguments(self):
@@ -80,6 +82,8 @@ class TextInput(SingleInput):
         self._name = function_arg_name
         self._widget = widgets.Combobox(**kwargs)
         self._validator = validator
+        if 'placeholder' not in kwargs:
+            self._widget.placeholder = function_arg_name
 
 
 class EvalInput(SingleInput):
@@ -105,6 +109,12 @@ class EvalInput(SingleInput):
         self._widget = widgets.Combobox(**kwargs)
         scope = scope if scope else get_notebook_global_scope()
         self._validator = lambda input: validator(_wrapped_eval(input, scope))
+        if 'placeholder' not in kwargs:
+            self._widget.placeholder = function_arg_name
+
+
+scipp_object_validator = ScippObjectValidator()
+has_dim_validator = AttrValidator('dims')
 
 
 class ScippInputWithDim(IInput):
@@ -113,7 +123,7 @@ class ScippInputWithDim(IInput):
     dimension field.
     """
     def __init__(self,
-                 func_arg_names: Sequence[str],
+                 func_arg_names: Sequence[str] = ('x', 'dim'),
                  data_name: str = 'data',
                  scope: MutableMapping[str, Any] = {}):
         self._scope = scope if scope else get_notebook_global_scope()
@@ -154,7 +164,7 @@ class ScippInputWithDim(IInput):
     def _scipp_obj_validator(self, input):
         scipp_object = _wrapped_eval(input, self._scope)
         scipp_object_validator(scipp_object)
-        has_attr_validator(scipp_object, 'dims')
+        has_dim_validator(scipp_object)
         return scipp_object
 
     def _dims_validator(self, input):

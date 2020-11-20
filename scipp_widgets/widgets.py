@@ -4,9 +4,10 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .input import get_notebook_global_scope, IInput
+from .inputs import get_notebook_global_scope, IInput, EvalInput
 from IPython.core.display import display, Javascript
 from typing import Any, MutableMapping, Callable, Iterable
+import scipp as sc
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -140,6 +141,13 @@ class DisplayWidget(WidgetBase):
 
     def _process(self, kwargs):
         display(self.callable(**kwargs))
+
+
+def PlotWidget(hide_code=False):
+    return DisplayWidget(wrapped_func=sc.plot.plot,
+                         inputs=(EvalInput('scipp_obj'), ),
+                         button_name='plot',
+                         hide_code=hide_code)
 
 
 class ProcessWidget(WidgetBase):

@@ -54,16 +54,23 @@ class ValueValidator():
         return input
 
 
-scipp_object_validator = TypeValidator(scipp_object)
+def ScippObjectValidator():
+    return TypeValidator(scipp_object)
 
 
-def has_attr_validator(input, attr):
+class AttrValidator():
     """
     Checks whether an input has a specified attribute.
     """
-    if hasattr(input, attr):
-        return input
-    raise ValueError(f'{input} does not have require attribute {attr}')
+    def __init__(self, required_attr):
+        self._required_attr = required_attr
+
+    def __call__(self, input):
+        if hasattr(input, self._required_attr):
+            return input
+
+        raise ValueError(
+            f'{input} does not have require attribute {self._required_attr}')
 
 
 class FilepathValidator():
