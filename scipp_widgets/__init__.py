@@ -5,4 +5,4 @@
 
 # flake8: noqa
 from .inputs import Input, TextInput
-from .widgets import ProcessWidget, DisplayWidget
+from .widgets import ProcessWidget, DisplayWidget, PlotWidget

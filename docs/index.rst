@@ -16,7 +16,7 @@ Source code can be found at https://github.com/scipp/scipp-widgets
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents
+   :caption: Reference
 
    widgets
    inputs
