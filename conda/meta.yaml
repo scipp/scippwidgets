@@ -1,6 +1,6 @@
 package:
-  name: scipp_widgets
-  version: {{ GIT_DESCRIBE_TAG }}
+  name: scipp-widgets
+  version: { { GIT_DESCRIBE_TAG } }
 
 source:
   path: ..
@@ -17,7 +17,7 @@ requirements:
 test:
   import:
     - scipp_widgets
-    - scipp_widgets.input_spec
+    - scipp_widgets.input
     - scipp_widgets.validators
     - scipp_widgets.widgets
   requires:
@@ -28,7 +28,7 @@ test:
     - python -m pytest -v
 
 build:
-  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
+  number: { { environ.get('GIT_DESCRIBE_NUMBER', 0) } }
 
 about:
   home: https://github.com/scipp/scipp-widgets

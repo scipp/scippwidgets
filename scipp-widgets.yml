@@ -2,7 +2,7 @@ name: scipp-widgets
 
 channels:
   - conda-forge
-  - scipp
+  - scipp/label/dev
 
 dependencies:
   - pytest
