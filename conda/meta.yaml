@@ -1,6 +1,6 @@
 package:
-  name: scipp_widgets
-  version: {{ GIT_DESCRIBE_TAG }}
+  name: scipp-widgets
+  version: { { GIT_DESCRIBE_TAG } }
 
 source:
   path: ..
@@ -28,7 +28,7 @@ test:
     - python -m pytest -v
 
 build:
-  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
+  number: { { environ.get('GIT_DESCRIBE_NUMBER', 0) } }
 
 about:
   home: https://github.com/scipp/scipp-widgets
