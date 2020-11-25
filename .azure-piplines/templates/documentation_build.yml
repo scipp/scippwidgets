@@ -29,7 +29,7 @@ jobs:
       - bash: |
           set -ex
           source activate scipp-widgets
-          conda install "$(packages_dir)/linux-64/"scipp_widgets*-py37_*.tar.bz2
+          conda install "$(packages_dir)/linux-64/"scipp-widgets*-py37_*.tar.bz2
         displayName: "Install Scipp package"
       - bash: |
           set -ex
