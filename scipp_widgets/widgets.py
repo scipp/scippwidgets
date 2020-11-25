@@ -4,9 +4,10 @@
 # @author Matthew Andrew
 
 import ipywidgets as widgets
-from .inputs import get_notebook_global_scope, IInput
+from .inputs import get_notebook_global_scope, IInput, Input
 from IPython.core.display import display, Javascript
 from typing import Any, MutableMapping, Callable, Iterable
+import scipp as sc
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -29,7 +30,7 @@ def toggle_code(state, output_widget=None):
 
 class HideCodeWidget(widgets.Box):
     """
-    Button which toggles the visibilty of code block.
+    Toggles the visibilty of the code block.
     """
     def __init__(self, state):
         super().__init__()
@@ -121,7 +122,8 @@ class WidgetBase(widgets.Box):
 
 class DisplayWidget(WidgetBase):
     """
-    Provides a simple graphical wrapper around a given callable.
+    Provides a simple graphical wrapper around a given callable,
+    displaying the return value.
     """
     def __init__(self,
                  wrapped_func: Callable,
@@ -141,9 +143,17 @@ class DisplayWidget(WidgetBase):
         display(self.callable(**kwargs))
 
 
+def PlotWidget(hide_code=False):
+    return DisplayWidget(wrapped_func=sc.plot.plot,
+                         inputs=(Input('scipp_obj'), ),
+                         button_name='plot',
+                         hide_code=hide_code)
+
+
 class ProcessWidget(WidgetBase):
     """
-    Provides a simple graphical wrapper around a given callable.
+    Provides a simple graphical wrapper around a given callable,
+    adding the return value to the notebooks scope.
     """
     def __init__(self,
                  wrapped_func: Callable,

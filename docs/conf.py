@@ -52,7 +52,7 @@ html_show_sourcelink = True
 html_sourcelink_suffix = ''
 nbsphinx_prolog = (
     "`Download this Jupyter notebook "
-    "<https://raw.githubusercontent.com/scipp/scipp/master/docs/"
+    "<https://raw.githubusercontent.com/scipp/scipp-widgets/master/docs/"
     "{{ env.doc2path(env.docname, base=None) }}>`_")
 
 # autodocs includes everything, even irrelevant API internals. autosummary
@@ -70,6 +70,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
+autosummary_generate = True
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -110,12 +112,12 @@ html_static_path = ['_static']
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/3/': None}
+intersphinx_mapping = {'scipp': ('https://scipp.github.io/', None)}
 
 nbsphinx_execute_arguments = [
-    "--InlineBackend.figure_formats={'svg', 'pdf'}",
-    "--InlineBackend.rc={'figure.dpi': 96}",
-    "--Session.metadata={'scipp_docs_build': True}",
+    "--InlineBackend.figure_formats 'svg'='pdf'",
+    "--InlineBackend.rc 'figure.dpi'=96",
+    "--Session.metadata 'scipp_docs_build'=True",
 ]
 
 html_sidebars = {

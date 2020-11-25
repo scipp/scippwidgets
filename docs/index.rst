@@ -3,12 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to scipp-widgets's documentation!
+Welcome to scipp-widgets' documentation!
 =========================================
+
+Source code can be found at https://github.com/scipp/scipp-widgets
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting Started
 
    scipp_widgets_intro
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Reference
+
+   widgets
+   inputs
+   validators
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Design
+
    concepts
