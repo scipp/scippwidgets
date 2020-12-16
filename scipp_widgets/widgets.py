@@ -6,7 +6,7 @@
 import ipywidgets as widgets
 from .inputs import get_notebook_global_scope, IInput, Input
 from IPython.core.display import display, Javascript
-from typing import Any, MutableMapping, Callable, Iterable
+from typing import Callable, Iterable
 import scipp as sc
 
 javascript_functions = {False: "hide()", True: "show()"}
@@ -62,9 +62,10 @@ class WidgetBase(widgets.Box):
         :param wrapped_func: The function to call.
         :param inputs: List of input specifiers.
         :param button_name: Text to display on process button.
-        :param layout: Controls the layout of widgets. Sets as the flex-flow property
-            of the underlying container. Common useful options are: row,
-            column, row wrap. For a full list of options see
+        :param layout: Controls the layout of widgets. Sets as the flex-flow
+            property of the underlying container.
+            Common useful options are: row, column, row wrap.
+            For a full list of options see
             https://ipywidgets.readthedocs.io/en/latest/examples/Widget%20Styling.html
         :param hide_code: Flag controlling whether to hide code.
         """
