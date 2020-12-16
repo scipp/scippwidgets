@@ -141,11 +141,11 @@ class DisplayWidget(WidgetBase):
         display(self.callable(**kwargs))
 
 
-def PlotWidget(hide_code=False):
+def PlotWidget(hide_code=False, layout='row wrap'):
     return DisplayWidget(wrapped_func=sc.plot.plot,
                          inputs=(Input('scipp_obj'), ),
                          button_name='plot',
-                         layout='row wrap',
+                         layout=layout,
                          hide_code=hide_code)
 
 
