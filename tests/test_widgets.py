@@ -35,7 +35,8 @@ def test_can_create_and_run_process_widget():
 
     scope = {'test': 'one'}
 
-    widget = ProcessWidget(test_func, [], scope=scope)
+    widget = ProcessWidget(test_func, [])
+    widget.scope = scope
     widget.output.value = 'obj_name'
     widget._on_button_clicked(0)
 
@@ -56,7 +57,8 @@ def test_function_with_args_and_kwargs():
     input_1 = TextInput('p_or_k')
     input_2 = TextInput('k_only')
     input_3 = TextInput('var_keyword')
-    widget = ProcessWidget(test_func, [input_1, input_2, input_3], scope=scope)
+    widget = ProcessWidget(test_func, [input_1, input_2, input_3])
+    widget.scope = scope
     widget.output.value = 'obj_name'
     input_1.widget.value = 'input_1'
     input_2.widget.value = 'input_2'
@@ -74,7 +76,8 @@ def test_default_func_args_used_if_they_exist():
     scope = {'test': 'one'}
     input_1 = TextInput('arg1')
     input_2 = TextInput('arg2')
-    widget = ProcessWidget(test_func, [input_1, input_2], scope=scope)
+    widget = ProcessWidget(test_func, [input_1, input_2])
+    widget.scope = scope
     widget.output.value = 'obj_name'
     input_1.widget.value = 'input_1'
     input_2.widget.value = ''

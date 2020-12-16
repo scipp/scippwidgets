@@ -27,7 +27,8 @@ def test_Input_creates_widget_with_correct_properties():
 def test_Input_evaluates_expression_in_scope():
     name = 'test_input'
     scope = {'test_obj': [1, 2, 3, 45]}
-    input = Input(function_arg_name=name, scope=scope)
+    input = Input(function_arg_name=name)
+    input.scope = scope
     input.widget.value = 'test_obj'
 
     assert input.function_arguments == {'test_input': [1, 2, 3, 45]}
@@ -52,7 +53,8 @@ def test_ScippInputWithDim_returns_correct_function_args():
     scipp_obj = _create_scipp_obj()
     function_args = ['arg1', 'arg2']
     scope = {'scipp_obj': scipp_obj}
-    input = ScippInputWithDim(function_args, 'input-data', scope=scope)
+    input = ScippInputWithDim(function_args, 'input-data')
+    input._scope = scope
 
     input.widget.children[0].value = 'scipp_obj'
     input.widget.children[1].value = 'y'
@@ -64,7 +66,8 @@ def test_ScippInputWithDim_throws_for_invalid_dimension():
     scipp_obj = _create_scipp_obj()
     function_args = ['arg1', 'arg2']
     scope = {'scipp_obj': scipp_obj}
-    input = ScippInputWithDim(function_args, 'input-data', scope=scope)
+    input = ScippInputWithDim(function_args, 'input-data')
+    input._scope = scope
 
     print(ipywidgets.__version__)
     input.widget.children[0].value = 'scipp_obj'
@@ -80,7 +83,8 @@ def test_ScippInputWithDim_throws_for_non_scipp_object():
     scipp_obj = [1, 2, 3, 4, 5]
     function_args = ['arg1', 'arg2']
     scope = {'scipp_obj': scipp_obj}
-    input = ScippInputWithDim(function_args, 'input-data', scope=scope)
+    input = ScippInputWithDim(function_args, 'input-data')
+    input._scope = scope
 
     input.widget.children[0].value = 'scipp_obj'
 

@@ -30,7 +30,7 @@ def toggle_code(state, output_widget=None):
 
 class HideCodeWidget(widgets.Box):
     """
-    Toggles the visibilty of the code block.
+    Toggles the visibilty of the code block, in which this is created.
     """
     def __init__(self, state):
         super().__init__()
@@ -50,19 +50,23 @@ class HideCodeWidget(widgets.Box):
 
 class WidgetBase(widgets.Box):
     """
-    Abstract base class for scipp-widgets
+    Abstract base class for scipp-widgets.
     """
     def __init__(self,
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
                  button_name: str = '',
+                 layout='row wrap',
                  hide_code: bool = False):
         """
-        Parameters:
-        wrapped_func (Callable): The function to call
-        inputs (list): class containing input data
-        name (str): name of widget to display
-        hide_code (bool): hide the code block containing this class
+        :param wrapped_func: The function to call.
+        :param inputs: List of input specifiers.
+        :param button_name: Text to display on process button.
+        :param layout: Controls the layout of widgets. Sets as the flex-flow property
+            of the underlying container. Common useful options are: row,
+            column, row wrap. For a full list of options see
+            https://ipywidgets.readthedocs.io/en/latest/examples/Widget%20Styling.html
+        :param hide_code: Flag controlling whether to hide code.
         """
         super().__init__()
         self.layout.flex_flow = 'column'
@@ -81,11 +85,11 @@ class WidgetBase(widgets.Box):
         self.output_area = widgets.Output()
         self.output_widgets = widgets.VBox([self.output_area])
 
-        self.row_widgets = widgets.HBox(self.input_widgets +
-                                        self.button_widgets)
-        self.row_widgets.layout.flex_flow = 'row wrap'
+        self.widget_area = widgets.Box(self.input_widgets +
+                                       self.button_widgets)
+        self.widget_area.layout.flex_flow = layout
 
-        self.children = [self.row_widgets, self.output_widgets]
+        self.children = [self.widget_area, self.output_widgets]
 
     def _setup_input_widgets(self, inputs):
         """
@@ -129,15 +133,9 @@ class DisplayWidget(WidgetBase):
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
                  button_name: str = '',
+                 layout: str = 'row wrap',
                  hide_code=False):
-        """
-        Parameters:
-        wrapped_func (Callable): The function to call
-        inputs (list): class containing input data
-        name (str): name of widget to display
-        hide_code (bool): hide the code block containing this class
-        """
-        super().__init__(wrapped_func, inputs, button_name, hide_code)
+        super().__init__(wrapped_func, inputs, button_name, layout, hide_code)
 
     def _process(self, kwargs):
         display(self.callable(**kwargs))
@@ -147,6 +145,7 @@ def PlotWidget(hide_code=False):
     return DisplayWidget(wrapped_func=sc.plot.plot,
                          inputs=(Input('scipp_obj'), ),
                          button_name='plot',
+                         layout='row wrap',
                          hide_code=hide_code)
 
 
@@ -160,24 +159,18 @@ class ProcessWidget(WidgetBase):
                  inputs: Iterable[IInput],
                  button_name: str = '',
                  hide_code: bool = False,
-                 scope: MutableMapping[str, Any] = {}):
-        """
-        Parameters:
-        wrapped_func (Callable): The function to call
-        inputs (list): class containing input data
-        button_name (str): name of widget to display
-        hide_code (bool): hide the code block containing this class
-        """
+                 layout='row wrap'):
         super().__init__(wrapped_func,
                          inputs,
                          button_name,
-                         hide_code=hide_code)
-        self.scope = scope if scope else get_notebook_global_scope()
+                         hide_code=hide_code,
+                         layout=layout)
+        self.scope = get_notebook_global_scope()
 
         self.output = widgets.Text(placeholder='output name',
                                    value='',
                                    continuous_update=False)
-        self.row_widgets.children = self.input_widgets + [
+        self.widget_area.children = self.input_widgets + [
             self.output
         ] + self.button_widgets
 
