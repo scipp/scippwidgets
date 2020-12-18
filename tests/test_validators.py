@@ -5,7 +5,6 @@
 
 import pytest
 import tempfile
-import pathlib
 from scipp_widgets.validators import (FilepathValidator, TypeValidator,
                                       ValueValidator)
 
