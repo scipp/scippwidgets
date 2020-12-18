@@ -7,7 +7,6 @@ import ipywidgets as widgets
 from .inputs import get_notebook_global_scope, IInput, Input
 from IPython.core.display import display, Javascript
 from typing import Callable, Iterable
-import scipp as sc
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -143,6 +142,7 @@ class DisplayWidget(WidgetBase):
 
 
 def PlotWidget(hide_code=False, layout='row wrap'):
+    import scipp as sc
     return DisplayWidget(wrapped_func=sc.plot.plot,
                          inputs=(Input('scipp_obj'), ),
                          button_name='plot',

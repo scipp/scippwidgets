@@ -3,13 +3,6 @@
 # @file
 # @author Matthew Andrew
 import pathlib
-import scipp as sc
-
-scipp_object_mutable = (sc.DataArray, sc.Dataset, sc.Variable,
-                        sc.DataArrayView, sc.DatasetView, sc.VariableView)
-
-scipp_object = scipp_object_mutable + (
-    sc.DataArrayConstView, sc.DatasetConstView, sc.VariableConstView)
 
 
 class Validator():
@@ -55,6 +48,11 @@ class ValueValidator():
 
 
 def ScippObjectValidator():
+    import scipp as sc
+
+    scipp_object = (sc.DataArray, sc.Dataset, sc.Variable, sc.DataArrayView,
+                    sc.DatasetView, sc.VariableView, sc.DataArrayConstView,
+                    sc.DatasetConstView, sc.VariableConstView)
     return TypeValidator(scipp_object)
 
 
