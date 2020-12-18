@@ -17,14 +17,6 @@ def test_filepath_validator_returns_input_for_existing_filepath():
         assert converted_filepath == temp_file.name
 
 
-def test_filepath_validator_returns_full_path_if_provided_with_just_filename():
-    with tempfile.NamedTemporaryFile() as temp_file:
-        path = pathlib.Path(temp_file.name)
-        filepath_validator = FilepathValidator(path.parent)
-        converted_filepath = filepath_validator(path.name)
-        assert converted_filepath == temp_file.name
-
-
 def test_filepath_validator_throws_value_error_for_unfound_file():
     filepath_validator = FilepathValidator()
     with pytest.raises(ValueError) as excinfo:
