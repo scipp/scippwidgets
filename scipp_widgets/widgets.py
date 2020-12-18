@@ -54,7 +54,7 @@ class WidgetBase(widgets.Box):
     def __init__(self,
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
-                 button_name: str = '',
+                 button_name: str = 'Process',
                  layout='row wrap',
                  hide_code: bool = False):
         """
@@ -75,7 +75,6 @@ class WidgetBase(widgets.Box):
         self.input_widgets = []
         self._setup_input_widgets(inputs)
 
-        button_name = button_name if button_name else wrapped_func.__name__
         self.button = widgets.Button(description=button_name)
         self.button.on_click(self._on_button_clicked)
         self.button_widgets = [self.button]
@@ -188,3 +187,34 @@ class ProcessWidget(WidgetBase):
         output = self.callable(**kwargs)
         self.scope[output_name] = output
         display(self.scope[output_name])
+
+
+class LoadWidget(WidgetBase):
+    """
+    Provides a simple graphical wrapper around a load function,
+    adding the return value to the notebooks scope labelled
+    by file name.
+    """
+    def __init__(self,
+                 wrapped_func: Callable,
+                 inputs: Iterable[IInput],
+                 button_name: str = '',
+                 hide_code: bool = False,
+                 layout='row wrap',
+                 filename_param='filename'):
+        super().__init__(wrapped_func,
+                         inputs,
+                         button_name,
+                         hide_code=hide_code,
+                         layout=layout)
+        self.scope = get_notebook_global_scope()
+        self._filename_param = filename_param
+
+    def _process(self, kwargs):
+        """
+        Calls the wrapped function using the
+        parameter values specified.
+        """
+        output = self.callable(**kwargs)
+        self.scope[kwargs[self._filename_param]] = output
+        display(kwargs[self._filename_param])

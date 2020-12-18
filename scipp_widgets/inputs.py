@@ -6,6 +6,8 @@ import ipywidgets as widgets
 from scipp_widgets.validators import ScippObjectValidator, AttrValidator
 from typing import Any, Sequence, Callable
 from abc import ABC, abstractmethod
+from ipyfilechooser import FileChooser
+import os
 
 
 def _wrapped_eval(input, scope):
@@ -172,6 +174,31 @@ class ScippInputWithDim(IInput):
         else:
             raise ValueError(f'Dimension {input} does no exist in'
                              f' {self._scipp_obj_input.value}')
+
+
+class FileInput(IInput):
+    """
+    Allows the user to browse to a directory.
+    """
+    def __init__(self,
+                 param_name: str,
+                 default_directory: str = os.getcwd(),
+                 validator: Callable[[Any], Any] = lambda value: value):
+        self._widget = FileChooser(default_directory,
+                                   select_desc='Select',
+                                   select_default=True,
+                                   change_desc='Select')
+        self._widget.use_dir_icons = True
+        self._param_name = param_name
+        self._validator = validator
+
+    @property
+    def widget(self):
+        return self._widget
+
+    @property
+    def function_arguments(self):
+        return {self._param_name: self._validator(self._widget.selected)}
 
 
 def get_notebook_global_scope():
