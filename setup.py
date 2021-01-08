@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="scipp-widgets",  # Replace with your own username
+    name="scipp-widgets",
     version="0.0.1",
     author="Matthew Andrew",
     author_email="",
