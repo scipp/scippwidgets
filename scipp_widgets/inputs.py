@@ -4,7 +4,7 @@
 # @author Matthew Andrew
 import ipywidgets as widgets
 from scipp_widgets.validators import ScippObjectValidator, AttrValidator
-from typing import Any, Sequence, MutableMapping, Callable
+from typing import Any, Sequence, Callable
 from abc import ABC, abstractmethod
 
 
@@ -33,10 +33,18 @@ class IInput(ABC):
 
 class SingleInput(IInput):
     def __init__(self,
-                 func_arg_name,
+                 func_arg_name: str,
                  widget_type=widgets.Combobox,
-                 validator=lambda input: input,
+                 validator: Callable[[str], Any] = lambda input: input,
                  **kwargs):
+        """
+        :param function_arg_name: Name of function argument this
+            input corresponds to.
+        :param widget_type: Type of widget to construct for this input.
+        :param validator: Validator function.
+        :param kwargs: kwargs to pass to widget constructor.
+        :type widget_type:  ipywidget
+        """
         self._name = func_arg_name
         self._widget = widget_type(**kwargs)
         self._validator = validator
@@ -70,15 +78,6 @@ class TextInput(SingleInput):
                  function_arg_name: str,
                  validator: Callable[[str], str] = lambda input: input,
                  **kwargs):
-        """
-        Parameters:
-        function_arg_name (str): Name of function argument this
-        input corresponds to.
-        validator (Callable[[str], Any]): Validator function.
-        options (List[str]): List of dropdown options.
-        tooltip (str): Widget placeholder text.
-        scope (Dict[str: Any]): Non default scope to use for evaluation.
-        """
         self._name = function_arg_name
         self._widget = widgets.Combobox(**kwargs)
         self._validator = validator
@@ -94,21 +93,20 @@ class Input(SingleInput):
     def __init__(self,
                  function_arg_name: str,
                  validator: Callable[[Any], Any] = lambda input: input,
-                 scope: MutableMapping[str, Any] = {},
                  **kwargs):
         """
-        Parameters:
-        function_arg_name (str): Name of function argument
-        this input maps to.
-        validator (Callable[[str], Any]): Validator function.
-        options (List[str]): List of dropdown options.
-        tooltip (str): Widget placeholder text.
-        scope (Dict[str: Any]): Non default scope to use for evaluation.
+        :param function_arg_name: Name of function argument this
+            input corresponds to.
+        :param widget_type: Type of widget to construct for this input.
+        :param validator: Validator function.
+        :param kwargs: kwargs to pass to widget constructor.
+        :type widget_type:  ipywidget
         """
         self._name = function_arg_name
         self._widget = widgets.Combobox(**kwargs)
-        scope = scope if scope else get_notebook_global_scope()
-        self._validator = lambda input: validator(_wrapped_eval(input, scope))
+        self.scope = get_notebook_global_scope()
+        self._validator = lambda input: validator(
+            _wrapped_eval(input, self.scope))
         if 'placeholder' not in kwargs:
             self._widget.placeholder = function_arg_name
 
@@ -124,9 +122,8 @@ class ScippInputWithDim(IInput):
     """
     def __init__(self,
                  func_arg_names: Sequence[str] = ('x', 'dim'),
-                 data_name: str = 'data',
-                 scope: MutableMapping[str, Any] = {}):
-        self._scope = scope if scope else get_notebook_global_scope()
+                 data_name: str = 'data'):
+        self._scope = get_notebook_global_scope()
         self._func_arg_names = func_arg_names
         self._scipp_obj_input = widgets.Text(placeholder=data_name,
                                              continuous_update=False)
