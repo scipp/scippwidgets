@@ -198,10 +198,13 @@ class LoadWidget(WidgetBase):
     def __init__(self,
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
-                 button_name: str = '',
-                 hide_code: bool = False,
+                 button_name: str = 'Load',
                  layout='row wrap',
-                 filename_param='filename'):
+                 filename_param='filename',
+                 hide_code: bool = False):
+        """
+        :param filename_param: Name of input parameter to use as file name.
+        """
         super().__init__(wrapped_func,
                          inputs,
                          button_name,

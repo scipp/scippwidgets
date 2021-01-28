@@ -178,18 +178,34 @@ class ScippInputWithDim(IInput):
 
 class FileInput(IInput):
     """
-    Allows the user to browse to a directory.
+    Allows the user to browse to a file or directory.
+    Returning the filepath as a string.
     """
     def __init__(self,
-                 param_name: str,
+                 function_arg_name: str,
                  default_directory: str = os.getcwd(),
-                 validator: Callable[[Any], Any] = lambda value: value):
+                 validator: Callable[[Any], Any] = lambda value: value,
+                 file_filter: str = '',
+                 show_only_dirs: bool = False):
+        """
+        :param function_arg_name: Name of function argument this
+            input corresponds to.
+        :default_directory: Directory to start browseing in.
+        :validator: Validator function.
+        :file_filter: String to use to filter displayed files.
+            Will only display files which contain the filter string
+            string as a substring.
+        :param show_only_dirs: If True will only display
+            and allow selection of directories.
+        """
         self._widget = FileChooser(default_directory,
-                                   select_desc='Select',
+                                   select_desc='Select file',
                                    select_default=True,
-                                   change_desc='Select')
+                                   change_desc='Select file',
+                                   file_filter=f'*{file_filter}*',
+                                   show_only_dirs=show_only_dirs)
         self._widget.use_dir_icons = True
-        self._param_name = param_name
+        self._param_name = function_arg_name
         self._validator = validator
 
     @property
