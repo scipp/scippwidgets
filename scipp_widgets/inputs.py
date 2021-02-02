@@ -6,7 +6,6 @@ import ipywidgets as widgets
 from scipp_widgets.validators import ScippObjectValidator, AttrValidator
 from typing import Any, Sequence, Callable
 from abc import ABC, abstractmethod
-from ipyfilechooser import FileChooser
 import os
 
 
@@ -198,6 +197,7 @@ class FileInput(IInput):
         :param show_only_dirs: If True will only display
             and allow selection of directories.
         """
+        from ipyfilechooser import FileChooser
         self._widget = FileChooser(default_directory,
                                    select_desc='Select file',
                                    select_default=True,

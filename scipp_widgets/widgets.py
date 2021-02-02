@@ -6,7 +6,8 @@
 import ipywidgets as widgets
 from .inputs import get_notebook_global_scope, IInput, Input
 from IPython.core.display import display, Javascript
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Dict, Any
+import pathlib
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -195,15 +196,21 @@ class LoadWidget(WidgetBase):
     adding the return value to the notebooks scope labelled
     by file name.
     """
-    def __init__(self,
-                 wrapped_func: Callable,
-                 inputs: Iterable[IInput],
-                 button_name: str = 'Load',
-                 layout='row wrap',
-                 filename_param='filename',
-                 hide_code: bool = False):
+    def __init__(
+            self,
+            wrapped_func: Callable,
+            inputs: Iterable[IInput],
+            button_name: str = 'Load',
+            layout='row wrap',
+            obj_name_generator: Callable[
+                [Dict[str, Any]],
+                str] = lambda kwargs: pathlib.Path(kwargs['filename']).stem,
+            hide_code: bool = False):
         """
-        :param filename_param: Name of input parameter to use as file name.
+        :param obj_name_factory: This is a callable
+            which takes as input the kwargs passed to
+            the load function and returns the name
+            to use for the loaded object.
         """
         super().__init__(wrapped_func,
                          inputs,
@@ -211,7 +218,7 @@ class LoadWidget(WidgetBase):
                          hide_code=hide_code,
                          layout=layout)
         self.scope = get_notebook_global_scope()
-        self._filename_param = filename_param
+        self._obj_name_generator = obj_name_generator
 
     def _process(self, kwargs):
         """
@@ -219,5 +226,5 @@ class LoadWidget(WidgetBase):
         parameter values specified.
         """
         output = self.callable(**kwargs)
-        self.scope[kwargs[self._filename_param]] = output
-        display(kwargs[self._filename_param])
+        name = self._obj_name_generator(kwargs)
+        self.scope[name] = output
