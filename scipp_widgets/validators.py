@@ -73,20 +73,21 @@ class AttrValidator():
 
 class FilepathValidator():
     """
-    Checks whether a given file exists in the specified directory.
+    Checks whether a given file exists and has correct extensions.
     """
-    def __init__(self, data_directory=pathlib.Path.cwd()):
-        self.data_directory = data_directory
+    def __init__(self, allowed_extensions=tuple()):
+        self.allowed_extensions = allowed_extensions
 
     def __call__(self, input):
         path = pathlib.Path(input)
 
-        if path.is_file():
-            return str(path)
+        if not path.is_file():
+            raise ValueError(f'Filepath {input} was not found.')
 
-        path = self.data_directory / path
+        if self.allowed_extensions and str(
+                path.suffix) not in self.allowed_extensions:
+            raise ValueError(
+                f'File has incorrect extension {path.suffix}.'
+                f' Allowed extensions are {self.allowed_extensions}')
 
-        if path.is_file():
-            return str(path)
-
-        raise ValueError(f'Filepath {input} was not found.')
+        return str(path)

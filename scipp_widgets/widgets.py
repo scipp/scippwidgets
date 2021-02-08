@@ -6,7 +6,8 @@
 import ipywidgets as widgets
 from .inputs import get_notebook_global_scope, IInput, Input
 from IPython.core.display import display, Javascript
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Dict, Any
+import pathlib
 
 javascript_functions = {False: "hide()", True: "show()"}
 
@@ -54,7 +55,7 @@ class WidgetBase(widgets.Box):
     def __init__(self,
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
-                 button_name: str = '',
+                 button_name: str = 'Process',
                  layout='row wrap',
                  hide_code: bool = False):
         """
@@ -75,7 +76,6 @@ class WidgetBase(widgets.Box):
         self.input_widgets = []
         self._setup_input_widgets(inputs)
 
-        button_name = button_name if button_name else wrapped_func.__name__
         self.button = widgets.Button(description=button_name)
         self.button.on_click(self._on_button_clicked)
         self.button_widgets = [self.button]
@@ -188,3 +188,43 @@ class ProcessWidget(WidgetBase):
         output = self.callable(**kwargs)
         self.scope[output_name] = output
         display(self.scope[output_name])
+
+
+class LoadWidget(WidgetBase):
+    """
+    Provides a simple graphical wrapper around a load function,
+    adding the return value to the notebooks scope labelled
+    by file name.
+    """
+    def __init__(
+            self,
+            wrapped_func: Callable,
+            inputs: Iterable[IInput],
+            button_name: str = 'Load',
+            layout='row wrap',
+            obj_name_generator: Callable[
+                [Dict[str, Any]],
+                str] = lambda kwargs: pathlib.Path(kwargs['filename']).stem,
+            hide_code: bool = False):
+        """
+        :param obj_name_factory: This is a callable
+            which takes as input the kwargs passed to
+            the load function and returns the name
+            to use for the loaded object.
+        """
+        super().__init__(wrapped_func,
+                         inputs,
+                         button_name,
+                         hide_code=hide_code,
+                         layout=layout)
+        self.scope = get_notebook_global_scope()
+        self._obj_name_generator = obj_name_generator
+
+    def _process(self, kwargs):
+        """
+        Calls the wrapped function using the
+        parameter values specified.
+        """
+        output = self.callable(**kwargs)
+        name = self._obj_name_generator(kwargs)
+        self.scope[name] = output

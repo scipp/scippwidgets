@@ -5,7 +5,6 @@
 
 import pytest
 import tempfile
-import pathlib
 from scipp_widgets.validators import (FilepathValidator, TypeValidator,
                                       ValueValidator)
 
@@ -14,14 +13,6 @@ def test_filepath_validator_returns_input_for_existing_filepath():
     filepath_validator = FilepathValidator()
     with tempfile.NamedTemporaryFile() as temp_file:
         converted_filepath = filepath_validator(temp_file.name)
-        assert converted_filepath == temp_file.name
-
-
-def test_filepath_validator_returns_full_path_if_provided_with_just_filename():
-    with tempfile.NamedTemporaryFile() as temp_file:
-        path = pathlib.Path(temp_file.name)
-        filepath_validator = FilepathValidator(path.parent)
-        converted_filepath = filepath_validator(path.name)
         assert converted_filepath == temp_file.name
 
 
