@@ -50,7 +50,7 @@ class HideCodeWidget(widgets.Box):
 
 class WidgetBase(widgets.Box):
     """
-    Abstract base class for scipp-widgets.
+    Abstract base class for scippwidgets.
     """
     def __init__(self,
                  wrapped_func: Callable,

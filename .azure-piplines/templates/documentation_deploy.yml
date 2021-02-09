@@ -34,7 +34,7 @@ jobs:
         displayName: "Git config"
       - bash: |
           set -ex
-          git clone git@github.com:scipp/scipp-widgets "$(documentation_repo_path)"
+          git clone git@github.com:scipp/scippwidgets "$(documentation_repo_path)"
         displayName: "Clone documentation repository"
       - bash: |
           set -ex

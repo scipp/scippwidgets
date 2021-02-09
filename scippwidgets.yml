@@ -1,4 +1,4 @@
-name: scipp-widgets
+name: scippwidgets
 
 channels:
   - conda-forge
