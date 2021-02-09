@@ -3,8 +3,8 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.widgets import (DisplayWidget, ProcessWidget)
-from scipp_widgets.inputs import TextInput
+from scippwidgets.widgets import (DisplayWidget, ProcessWidget)
+from scippwidgets.inputs import TextInput
 import pytest
 
 
@@ -18,7 +18,7 @@ def no_display(monkeypatch):
     def display_stub(input):
         pass
 
-    monkeypatch.setattr("scipp_widgets.widgets.display", display_stub)
+    monkeypatch.setattr("scippwidgets.widgets.display", display_stub)
 
 
 def test_can_create_and_run_display_widget():

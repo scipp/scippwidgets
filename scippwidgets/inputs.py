@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 import ipywidgets as widgets
-from scipp_widgets.validators import ScippObjectValidator, AttrValidator
+from scippwidgets.validators import ScippObjectValidator, AttrValidator
 from typing import Any, Sequence, Callable
 from abc import ABC, abstractmethod
 import os
@@ -123,13 +123,16 @@ class ScippInputWithDim(IInput):
     """
     def __init__(self,
                  func_arg_names: Sequence[str] = ('x', 'dim'),
-                 data_name: str = 'data'):
+                 data_name: str = 'data',
+                 **kwargs):
         self._scope = get_notebook_global_scope()
         self._func_arg_names = func_arg_names
         self._scipp_obj_input = widgets.Text(placeholder=data_name,
-                                             continuous_update=False)
+                                             continuous_update=False,
+                                             **kwargs)
         self._dimension_input = widgets.Combobox(placeholder='dim',
-                                                 continuous_update=False)
+                                                 continuous_update=False,
+                                                 **kwargs)
         self._scipp_obj_input.observe(self._handle_scipp_obj_change,
                                       names='value')
         self._widget = widgets.HBox(

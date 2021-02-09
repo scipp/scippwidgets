@@ -5,8 +5,8 @@
 
 import pytest
 import tempfile
-from scipp_widgets.validators import (FilepathValidator, TypeValidator,
-                                      ValueValidator)
+from scippwidgets.validators import (FilepathValidator, TypeValidator,
+                                     ValueValidator)
 
 
 def test_filepath_validator_returns_input_for_existing_filepath():

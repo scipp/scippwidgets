@@ -17,8 +17,8 @@ import os
 # -- Project information -----------------------------------------------------
 
 # General information about the project.
-project = u'scipp-widgets'
-copyright = u'2020 Scipp contributors'
+project = u'scippwidgets'
+copyright = u'2021 Scipp contributors'
 author = u'Scipp contributors'
 
 # The full version, including alpha/beta/rc tags
@@ -52,7 +52,7 @@ html_show_sourcelink = True
 html_sourcelink_suffix = ''
 nbsphinx_prolog = (
     "`Download this Jupyter notebook "
-    "<https://raw.githubusercontent.com/scipp/scipp-widgets/master/docs/"
+    "<https://raw.githubusercontent.com/scipp/scippwidgets/master/docs/"
     "{{ env.doc2path(env.docname, base=None) }}>`_")
 
 # autodocs includes everything, even irrelevant API internals. autosummary
