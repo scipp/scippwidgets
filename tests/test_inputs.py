@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 
-from scipp_widgets.inputs import (Input, TextInput, ScippInputWithDim)
+from scippwidgets.inputs import (Input, TextInput, ScippInputWithDim)
 import scipp as sc
 import numpy as np
 import pytest

@@ -3,7 +3,7 @@
 # @file
 # @author Matthew Andrew
 import ipywidgets as widgets
-from scipp_widgets.validators import ScippObjectValidator, AttrValidator
+from scippwidgets.validators import ScippObjectValidator, AttrValidator
 from typing import Any, Sequence, Callable
 from abc import ABC, abstractmethod
 import os

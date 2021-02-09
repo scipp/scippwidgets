@@ -1,12 +1,7 @@
-.. scipp-widgets documentation master file, created by
-   sphinx-quickstart on Wed Nov 11 17:38:46 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to scippwidgets' documentation!
+=======================================
 
-Welcome to scipp-widgets' documentation!
-=========================================
-
-Source code can be found at https://github.com/scipp/scipp-widgets
+Source code can be found at https://github.com/scipp/scippwidgets
 
 .. toctree::
    :maxdepth: 2

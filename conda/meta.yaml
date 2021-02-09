@@ -1,5 +1,5 @@
 package:
-  name: scipp-widgets
+  name: scippwidgets
   version: {{GIT_DESCRIBE_TAG}}
 
 source:
@@ -17,10 +17,10 @@ requirements:
 
 test:
   import:
-    - scipp_widgets
-    - scipp_widgets.inputs
-    - scipp_widgets.validators
-    - scipp_widgets.widgets
+    - scippwidgets
+    - scippwidgets.inputs
+    - scippwidgets.validators
+    - scippwidgets.widgets
   requires:
     - pytest
   source_files:
@@ -32,9 +32,9 @@ build:
   number: {{environ.get('GIT_DESCRIBE_NUMBER', 0)}}
 
 about:
-  home: https://github.com/scipp/scipp-widgets
+  home: https://github.com/scipp/scippwidgets
   license: GPLv3
   summary: ipywidget wrappers for scipp
   description: ipywidget wrappers for scipp
-  dev_url: https://github.com/scipp/scipp-widgets
+  dev_url: https://github.com/scipp/scippwidgets
   doc_url:
