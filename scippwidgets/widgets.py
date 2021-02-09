@@ -132,7 +132,7 @@ class DisplayWidget(WidgetBase):
     def __init__(self,
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
-                 button_name: str = '',
+                 button_name: str = 'Display',
                  layout: str = 'row wrap',
                  hide_code=False):
         super().__init__(wrapped_func, inputs, button_name, layout, hide_code)
@@ -145,7 +145,7 @@ def PlotWidget(hide_code=False, layout='row wrap'):
     import scipp as sc
     return DisplayWidget(wrapped_func=sc.plot.plot,
                          inputs=(Input('scipp_obj'), ),
-                         button_name='plot',
+                         button_name='Plot',
                          layout=layout,
                          hide_code=hide_code)
 
@@ -158,7 +158,7 @@ class ProcessWidget(WidgetBase):
     def __init__(self,
                  wrapped_func: Callable,
                  inputs: Iterable[IInput],
-                 button_name: str = '',
+                 button_name: str = 'Process',
                  hide_code: bool = False,
                  layout='row wrap'):
         super().__init__(wrapped_func,
