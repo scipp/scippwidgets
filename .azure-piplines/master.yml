@@ -3,6 +3,13 @@ trigger:
 
 pr: none
 
+resources:
+  pipelines:
+    - pipeline: upstream_scipp_release
+      project: scipp
+      source: Release
+      trigger: true
+
 stages:
   - template: code_quality_checks.yml
   - stage: "Create_package_and_test"
