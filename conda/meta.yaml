@@ -33,7 +33,7 @@ build:
 
 about:
   home: https://github.com/scipp/scippwidgets
-  license: GPLv3
+  license: BSD-3-Clause
   summary: ipywidget wrappers for scipp
   description: ipywidget wrappers for scipp
   dev_url: https://github.com/scipp/scippwidgets
