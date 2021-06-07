@@ -30,7 +30,10 @@ jobs:
           set -ex
           source activate scippwidgets
           conda install "$(packages_dir)/linux-64/"scippwidgets*-py37_*.tar.bz2
-        displayName: "Install Scipp package"
+          conda list
+          python -c"print(scippwidgets.__file__") 
+          python -c"print(scippwidgets.__version__") 
+        displayName: "Install scippwidgets package"
       - bash: |
           set -ex
           cd docs
