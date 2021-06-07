@@ -7,7 +7,7 @@ jobs:
   - job: "documentation"
     displayName: "Documentation"
     pool:
-      vmImage: "ubuntu-latest"
+      vmImage: "ubuntu-20.04"
     variables:
       documentation_artefact_path: "$(Build.StagingDirectory)/documentation"
       documentation_repo_path: "$(Build.StagingDirectory)/git"

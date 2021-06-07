@@ -20,7 +20,7 @@ stages:
         displayName: "Build package and test"
         timeoutInMinutes: 20
         pool:
-          vmImage: 'ubuntu-20.04'
+          vmImage: "ubuntu-20.04"
         variables:
           - group: tokens
         steps:

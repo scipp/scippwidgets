@@ -6,7 +6,7 @@ stages:
       - job: "python_checks"
         displayName: "Python Checks"
         pool:
-          vmImage: "ubuntu-latest"
+          vmImage: 'ubuntu-20.04'
         steps:
           - task: UsePythonVersion@0
             inputs:
