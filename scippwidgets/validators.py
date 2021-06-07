@@ -50,9 +50,7 @@ class ValueValidator():
 def ScippObjectValidator():
     import scipp as sc
 
-    scipp_object = (sc.DataArray, sc.Dataset, sc.Variable, sc.DataArrayView,
-                    sc.DatasetView, sc.VariableView, sc.DataArrayConstView,
-                    sc.DatasetConstView, sc.VariableConstView)
+    scipp_object = (sc.DataArray, sc.Dataset, sc.Variable)
     return TypeValidator(scipp_object)
 
 
