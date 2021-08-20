@@ -34,6 +34,3 @@ extends:
       linux:
         py_versions: ['3.7']
         conda_env: 'scippwidgets.yml'
-    deploy: true
-    conda_label: 'test'
-    publish_docs: false
