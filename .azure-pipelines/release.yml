@@ -33,3 +33,4 @@ extends:
     deploy: true
     conda_label: 'main'
     publish_docs: true
+    release: true
