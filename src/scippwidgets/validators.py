@@ -27,9 +27,8 @@ class TypeValidator():
 
     def __call__(self, input):
         if not isinstance(input, self.allowed_types):
-            raise ValueError(
-                f'{input} of invalid type {type(input)}. Valid types are'
-                f': {self.allowed_types}')
+            raise ValueError(f'{input} of invalid type {type(input)}. Valid types are'
+                             f': {self.allowed_types}')
         return input
 
 
@@ -82,10 +81,8 @@ class FilepathValidator():
         if not path.is_file():
             raise ValueError(f'Filepath {input} was not found.')
 
-        if self.allowed_extensions and str(
-                path.suffix) not in self.allowed_extensions:
-            raise ValueError(
-                f'File has incorrect extension {path.suffix}.'
-                f' Allowed extensions are {self.allowed_extensions}')
+        if self.allowed_extensions and str(path.suffix) not in self.allowed_extensions:
+            raise ValueError(f'File has incorrect extension {path.suffix}.'
+                             f' Allowed extensions are {self.allowed_extensions}')
 
         return str(path)

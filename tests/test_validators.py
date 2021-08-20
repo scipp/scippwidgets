@@ -5,8 +5,7 @@
 
 import pytest
 import tempfile
-from scippwidgets.validators import (FilepathValidator, TypeValidator,
-                                     ValueValidator)
+from scippwidgets.validators import (FilepathValidator, TypeValidator, ValueValidator)
 
 
 def test_filepath_validator_returns_input_for_existing_filepath():
@@ -21,8 +20,7 @@ def test_filepath_validator_throws_value_error_for_unfound_file():
     with pytest.raises(ValueError) as excinfo:
         filepath_validator('non_existent_file.txt')
 
-    assert str(
-        excinfo.value) == 'Filepath non_existent_file.txt was not found.'
+    assert str(excinfo.value) == 'Filepath non_existent_file.txt was not found.'
 
 
 def test_typed_validator_returns_object():
@@ -41,9 +39,8 @@ def test_typed_validator_throws_exception_if_object_is_not_allowed_type():
     with pytest.raises(ValueError) as excinfo:
         dict_validator(test_object)
 
-    assert str(
-        excinfo.value) == (f"{test_object} of invalid type <class 'list'>."
-                           " Valid types are: (<class 'dict'>,)")
+    assert str(excinfo.value) == (f"{test_object} of invalid type <class 'list'>."
+                                  " Valid types are: (<class 'dict'>,)")
 
 
 def test_string_allowed_values_converter():
@@ -55,5 +52,5 @@ def test_string_allowed_values_converter():
     with pytest.raises(ValueError) as excinfo:
         string_allowed_values_validator('wavelength')
 
-    assert str(excinfo.value
-               ) == f'wavelength is invalid. Allowed values are: {("tof", )}'
+    assert str(
+        excinfo.value) == f'wavelength is invalid. Allowed values are: {("tof", )}'

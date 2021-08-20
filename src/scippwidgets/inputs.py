@@ -106,8 +106,7 @@ class Input(SingleInput):
         self._name = function_arg_name
         self._widget = widgets.Combobox(**kwargs)
         self.scope = get_notebook_global_scope()
-        self._validator = lambda input: validator(
-            _wrapped_eval(input, self.scope))
+        self._validator = lambda input: validator(_wrapped_eval(input, self.scope))
         if 'placeholder' not in kwargs:
             self._widget.placeholder = function_arg_name
 
@@ -133,10 +132,8 @@ class ScippInputWithDim(IInput):
         self._dimension_input = widgets.Combobox(placeholder='dim',
                                                  continuous_update=False,
                                                  **kwargs)
-        self._scipp_obj_input.observe(self._handle_scipp_obj_change,
-                                      names='value')
-        self._widget = widgets.HBox(
-            [self._scipp_obj_input, self._dimension_input])
+        self._scipp_obj_input.observe(self._handle_scipp_obj_change, names='value')
+        self._widget = widgets.HBox([self._scipp_obj_input, self._dimension_input])
         self._validators = (self._scipp_obj_validator, self._dims_validator)
         self._allowed_dims = []
 
@@ -144,8 +141,8 @@ class ScippInputWithDim(IInput):
     def function_arguments(self):
         return {
             name: validator(widget.value)
-            for name, widget, validator in zip(
-                self._func_arg_names, self.widget.children, self._validators)
+            for name, widget, validator in zip(self._func_arg_names,
+                                               self.widget.children, self._validators)
             if widget.value
         }
 
