@@ -31,7 +31,7 @@ release = '0.0.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax', 'IPython.sphinxext.ipython_directive',
+    'sphinx.ext.mathjax', 'sphinx.ext.doctest', 'IPython.sphinxext.ipython_directive',
     'IPython.sphinxext.ipython_console_highlighting', 'nbsphinx'
 ]
 
@@ -114,9 +114,7 @@ html_static_path = ['_static']
 intersphinx_mapping = {'scipp': ('https://scipp.github.io/', None)}
 
 nbsphinx_execute_arguments = [
-    "--InlineBackend.figure_formats 'svg'='pdf'",
-    "--InlineBackend.rc 'figure.dpi'=96",
-    "--Session.metadata 'scipp_docs_build'=True",
+    "--Session.metadata=scipp_docs_build=True",
 ]
 
 html_sidebars = {
@@ -126,3 +124,23 @@ html_sidebars = {
         'searchbox.html',
     ]
 }
+
+# -- Options for doctest --------------------------------------------------
+
+doctest_global_setup = '''
+import numpy as np
+import scipp as sc
+'''
+
+# Using normalize whitespace because many __str__ functions in scipp produce
+# extraneous empty lines and it would look strange to include them in the docs.
+doctest_default_flags = doctest.ELLIPSIS | doctest.IGNORE_EXCEPTION_DETAIL | \
+                        doctest.DONT_ACCEPT_TRUE_FOR_1 | \
+                        doctest.NORMALIZE_WHITESPACE
+
+# -- Options for linkcheck ------------------------------------------------
+
+linkcheck_ignore = [
+    # Specific lines in Github blobs cannot be found by linkcheck.
+    r'https?://github\.com/.*?/blob/[a-f0-9]+/.+?#'
+]
