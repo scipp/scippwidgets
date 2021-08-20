@@ -7,9 +7,9 @@ source:
 
 requirements:
   build:
-    - python {{ python }}
+    - sphinx>=1.6
+    - sphinx_rtd_theme
   run:
-    - python {{ python }}
     - scipp
     - ipywidgets
     - matplotlib
@@ -30,6 +30,9 @@ test:
 
 build:
   number: {{environ.get('GIT_DESCRIBE_NUMBER', 0)}}
+  noarch: python
+  script:
+    - python setup.py install
 
 about:
   home: https://github.com/scipp/scippwidgets
@@ -37,4 +40,4 @@ about:
   summary: ipywidget wrappers for scipp
   description: ipywidget wrappers for scipp
   dev_url: https://github.com/scipp/scippwidgets
-  doc_url:
+  doc_url: https://scipp.github.io/scippwidgets
