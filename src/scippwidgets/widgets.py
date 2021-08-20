@@ -142,7 +142,7 @@ class DisplayWidget(WidgetBase):
 
 def PlotWidget(hide_code=False, layout='row wrap'):
     import scipp as sc
-    return DisplayWidget(wrapped_func=sc.plot.plot,
+    return DisplayWidget(wrapped_func=sc.plot,
                          inputs=(Input('scipp_obj'), ),
                          button_name='Plot',
                          layout=layout,
