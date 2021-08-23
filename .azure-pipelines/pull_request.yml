@@ -1,0 +1,36 @@
+parameters:
+- name: verbose
+  displayName: Verbose
+  type: boolean
+  default: false
+
+resources:
+  repositories:
+  - repository: SharedPipelines
+    name: scipp/pipelines
+    type: github
+    endpoint: scipp
+    ref: main
+
+trigger:
+  branches:
+    exclude:
+      - '*'
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - '*'
+
+extends:
+  template: stages.yml@SharedPipelines
+  parameters:
+    verbose: ${{ parameters.verbose }}
+    conda_channels: '--channel scipp'
+    gh_pages_subdirectory: 'scippwidgets'
+    noarch: true
+    config:
+      linux:
+        py_versions: ['3.7']
+        conda_env: 'scippwidgets.yml'

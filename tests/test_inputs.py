@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2020 Scipp contributors (https://github.com/scipp)
+# Copyright (c) 2021 Scipp contributors (https://github.com/scipp)
 # @file
 # @author Matthew Andrew
 
@@ -14,9 +14,7 @@ def test_Input_creates_widget_with_correct_properties():
     name = 'test_input'
     options = ('x', 'y', 'z')
     tooltip = 'input here'
-    input = TextInput(function_arg_name=name,
-                      options=options,
-                      placeholder=tooltip)
+    input = TextInput(function_arg_name=name, options=options, placeholder=tooltip)
     input.widget.value = 'user input'
 
     assert input.widget.options == options

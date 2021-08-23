@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2020 Scipp contributors (https://github.com/scipp)
+# Copyright (c) 2021 Scipp contributors (https://github.com/scipp)
 # @file
 # @author Matthew Andrew
 
@@ -85,8 +85,7 @@ class WidgetBase(widgets.Box):
         self.output_area = widgets.Output()
         self.output_widgets = widgets.VBox([self.output_area])
 
-        self.widget_area = widgets.Box(self.input_widgets +
-                                       self.button_widgets)
+        self.widget_area = widgets.Box(self.input_widgets + self.button_widgets)
         self.widget_area.layout.flex_flow = layout
 
         self.children = [self.widget_area, self.output_widgets]
@@ -143,7 +142,7 @@ class DisplayWidget(WidgetBase):
 
 def PlotWidget(hide_code=False, layout='row wrap'):
     import scipp as sc
-    return DisplayWidget(wrapped_func=sc.plot.plot,
+    return DisplayWidget(wrapped_func=sc.plot,
                          inputs=(Input('scipp_obj'), ),
                          button_name='Plot',
                          layout=layout,
@@ -171,9 +170,8 @@ class ProcessWidget(WidgetBase):
         self.output = widgets.Text(placeholder='output name',
                                    value='',
                                    continuous_update=False)
-        self.widget_area.children = self.input_widgets + [
-            self.output
-        ] + self.button_widgets
+        self.widget_area.children = self.input_widgets + [self.output
+                                                          ] + self.button_widgets
 
     def _process(self, kwargs):
         """
@@ -196,16 +194,15 @@ class LoadWidget(WidgetBase):
     adding the return value to the notebooks scope labelled
     by file name.
     """
-    def __init__(
-            self,
-            wrapped_func: Callable,
-            inputs: Iterable[IInput],
-            button_name: str = 'Load',
-            layout='row wrap',
-            obj_name_generator: Callable[
-                [Dict[str, Any]],
-                str] = lambda kwargs: pathlib.Path(kwargs['filename']).stem,
-            hide_code: bool = False):
+    def __init__(self,
+                 wrapped_func: Callable,
+                 inputs: Iterable[IInput],
+                 button_name: str = 'Load',
+                 layout='row wrap',
+                 obj_name_generator: Callable[
+                     [Dict[str, Any]],
+                     str] = lambda kwargs: pathlib.Path(kwargs['filename']).stem,
+                 hide_code: bool = False):
         """
         :param obj_name_factory: This is a callable
             which takes as input the kwargs passed to
